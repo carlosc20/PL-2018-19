@@ -1,15 +1,27 @@
 %option yylineno
 %option noyywrap
-
-%x PAGE AUTOR 
+%{
+ FILE * cit, *prov;
+%}
+%x PAGE PROV CIT AUTOR 
 %%
 
 <*>\<page\>     							  {BEGIN PAGE;}
-<*>.|\n 										{}
-<PAGE>{					
+<*>.|\n 									  {}
+
+<PAGE>{
+.*\<title\>Provérbios.*\<\/title\>			  {BEGIN PROV;}
+.*\<title\>.*\<\/title\>                      {BEGIN CIT;}
+}
+
+<PROV>{
+\ ?\*.*										 {fprintf(prov,"%d %s\n",yylineno,yytext);}
+\<\/page\>                       			 {BEGIN PAGE;}
+}
+
+<CIT>{
 .*\<text\ xml:.*Autor  				      	  {BEGIN AUTOR;}
 .*|\n										  {}
-
 }
 
 <AUTOR>{
@@ -18,15 +30,17 @@
 										i++;
 									while(yytext[i+1] == ' ')
 										i++;
-								printf("%d %s\n",yylineno,yytext+i+1);}
-\*\ ?&quot.*&quot                {printf("%d %s\n",yylineno,yytext);}
-\<\/page\>                        {BEGIN PAGE;}
+									fprintf(cit,"%d %s\n",yylineno,yytext+i+1);}
+\*\ ?&quot.*&quot                {fprintf(cit,"%d %s\n",yylineno,yytext);}
+\<\/page\>                       {BEGIN PAGE;}
 } 
 %%
 int main(int argc, char* argv[]){
 	if(argc == 1) 
 		yylex();
 	else{
+		cit = fopen ("citacoes.cit","w");
+		prov = fopen ("proverbios.prov","w");
 		yyin = fopen(argv[1], "r");
 		yylex();
 		fclose(yyin);
