@@ -6,25 +6,41 @@
  char *name;
  int toOpen = 0;
 %}
-%x PAGE PROVERBIOS AUTOR QUOTE DIALOG LINK INSIDEL NAME
+%x PAGE PROVERBIOS PROVTITLE AUTOR QUOTE DIALOG LINK INSIDEL NAME PROV LINKPROV
 %%
 			//»
 			//ver aquilo de ter &quot. --> ponto final só no fim
 			//linha 1007 --> discurso ??  fprintf(ind,".hmtl");fprintf(ind,"</a></li>\n");
 			//Angelis Borges,,,,Vasyl Slipak,,,,,Banks
+			// ver redirects nos provérbios? 50024
 
 \<page\>     						{BEGIN PAGE;}
 
 <PAGE>{
-\<title\>Provérbios.*\<\/title\>	{BEGIN PROVERBIOS;}
+\<title\>Provérbios					{BEGIN PROVTITLE; fprintf(prov,"%d -----------------------------------------------------------------Provérbios", yylineno);}
 \<text\ xml:.*Autor  				{BEGIN AUTOR;}
 }
 
+<PROVTITLE>{
+\<\/title\>                       	{fprintf(prov,"\n"); BEGIN PROVERBIOS;}
+.									{fprintf(prov,"%s",yytext);}
+}
+
 <PROVERBIOS>{
-\ ?\*.*								{fprintf(prov,"%d %s\n",yylineno,yytext);}
+\*\ ?'*(&quot;)?					{BEGIN PROV; fprintf(prov,"%d ",yylineno);}
 \<\/page\>                       	{BEGIN PAGE;}
 }
 
+<PROV>{
+('*(&quot;)?)|\n					{BEGIN PROVERBIOS; fprintf(prov,"\n");}
+\[\[								{BEGIN LINKPROV;}
+.|\n								{fprintf(prov,"%s",yytext);}
+}
+
+<LINKPROV>{
+\]\]								{BEGIN PROV;}
+.|\n								{fprintf(prov,"%s",yytext);}
+}
 
 
 <AUTOR>{
