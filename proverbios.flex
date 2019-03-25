@@ -6,7 +6,7 @@
  char *name;
  int toOpen = 0;
 %}
-%x PAGE PROV CIT AUTOR QUOTE DIALOG LINK INSIDEL 
+%x PAGE PROV CIT AUTOR QUOTE DIALOG LINK INSIDEL NAME
 %%
 			//»
 			//ver aquilo de ter &quot. --> ponto final só no fim
@@ -30,24 +30,25 @@
 }
 
 <AUTOR>{
-\|\ *Wikipedia\ *=\ *.* 			{int i = 0; toOpen = 1;
-									while(yytext[i] != '=')
-										i++;
-									while(yytext[i+1] == ' ')
-										i++;
-									name = strdup(yytext+i+1);
-
-									sprintf(filename,"cithtml/%s.html",name);
-									cit = fopen (filename,"w");
-									fprintf(ind,"<li><a href='%s'>%s</a></li>\n",filename, name);
-									fprintf(cit, "<head>\n\t<meta charset='UTF-8'>\n</head>\n<body>");
-									fprintf(cit,"<h1>%s</h1>\n",name);
-									}
+\|\ *Wikipedia\ *=\ *	 			{BEGIN NAME;}
 
 \*\ ?('*(&quot;)+'*\ ?)|(\“)        {BEGIN QUOTE; fprintf(cit,"</br>"); fprintf(cit,"“");}
 \<\/page\>                        	{BEGIN PAGE;
 										if(toOpen == 1){
 											fclose(cit); fprintf(cit, "</body>"); toOpen = 0;}
+									}
+}
+
+<NAME>{
+.*/\n								{int i = 0; toOpen = 1;
+									name = strdup(yytext);
+
+									sprintf(filename,"cithtml/%s.html",name);
+									cit = fopen (filename,"w");
+									fprintf(ind,"<li><a href='%s'>%s</a></li>\n",filename, name);
+									fprintf(cit, "<head>\n\t<meta charset='UTF-8'>\n</head>\n<body>");
+									fprintf(cit,"<h1>%s</h1>\n",name); 
+									BEGIN AUTOR;
 									}
 }
 
