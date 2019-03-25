@@ -6,7 +6,7 @@
  char *name;
  int toOpen = 0;
 %}
-%x PAGE PROVERBIOS CITACOES AUTOR QUOTE DIALOG LINK INSIDEL NAME
+%x PAGE PROVERBIOS AUTOR QUOTE DIALOG LINK INSIDEL NAME
 %%
 			//»
 			//ver aquilo de ter &quot. --> ponto final só no fim
@@ -17,7 +17,7 @@
 
 <PAGE>{
 \<title\>Provérbios.*\<\/title\>	{BEGIN PROVERBIOS;}
-\<title\>.*\<\/title\>              {BEGIN CITACOES;}
+\<text\ xml:.*Autor  				{BEGIN AUTOR;}
 }
 
 <PROVERBIOS>{
@@ -25,9 +25,7 @@
 \<\/page\>                       	{BEGIN PAGE;}
 }
 
-<CITACOES>{
-\<text\ xml:.*Autor  				{BEGIN AUTOR;}
-}
+
 
 <AUTOR>{
 \|\ *Wikipedia\ *=\ *	 			{BEGIN NAME;}
@@ -85,8 +83,8 @@ int main(int argc, char* argv[]){
 		yylex();
 	}
 	else{
-		cit = fopen ("cit.txt","w");
-		ind = fopen ("indice.html","w"); 
+		cit = fopen ("citacoes.txt","w");
+		ind = fopen ("index.html","w"); 
 		fprintf(ind, "<head>\n\t<meta charset='UTF-8'>\n</head>\n<body>");
 		prov = fopen ("proverbios.txt","w");
 		yyin = fopen(argv[1], "r");
