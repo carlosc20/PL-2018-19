@@ -1,18 +1,43 @@
 %option yylineno
 %option noyywrap
 %{
- FILE *cit, *prov, *iCit, *iProv;
+FILE *cit, *prov, *iCit, *iProv;
+FILE *current;
+int currentCont;
+char* title;
 
- FILE *current;
- int inProv = 0;
+int red = 0;
+int provCount = 0;
+int provCatCount = 0;
+int citCount = 0;
+
+ /* 
+ '''
+ * ''&quot;Provérbio em português moderno.&quot;
+::- '''Alternativos:'''
+:::- &quot;Provérbio alternativo 1.&quot;
+:::- &quot;Provérbio alternativo 2.&quot;
+::- Notas sobre o contexto, informações adicionais caso o significado não esteja claro, etc.
+
+
+quantos formatos existem
+*/
+
+void beginCit(FILE* file) {
+	fprintf(file,"“");
+}
+
+void endCit(FILE* file) {
+	fprintf(file,"”<br>");
+}
+
+void beginPage(FILE* file, const char* t) {
+	fprintf(file, "<head>\n\t<meta charset='UTF-8'>\n</head>\n<body>\n<h1>%s</h1>\n", t);
+}
 
 %}
-%x PAGE PROVERBIOS PROVTITLE AUTOR QUOTE DIALOG LINK INLINK NAME PROV CITACOES
+%x PAGE PROVLIST PROVTITLE PROVHEADER PROV AUTOR QUOTE DIALOG LINK INLINK NAME CITACOES 
 %%
-
-			//linha 1007 --> discurso ??  fprintf(ind,".hmtl");fprintf(ind,"</a></li>\n");
-			//Angelis Borges,,,,Vasyl Slipak,,,,,Banks
-			// ver redirects nos provérbios? 50024
 
 \<page\>     						{BEGIN PAGE;}
 
@@ -22,28 +47,37 @@
 }
 
 <PROVTITLE>{
-.*/\<\/title\>                      {
-	 								char filename[256];
-									char* name = strdup(yytext);
-									sprintf(filename,"proverbios/tipos/%s.html",name);
+.*/\<\/title\>                      {BEGIN PROVHEADER; title = strdup(yytext);}
+}
+
+<PROVHEADER>{
+\<redirect							{BEGIN PAGE; red++;}
+\<revision							{
+									provCatCount++;
+									char filename[256];
+									sprintf(filename,"proverbios/tipos/%s.html",title);
 									prov = fopen(filename,"w");
-									fprintf(iProv, '<li><a href="tipos/%s.html">%s</a></li>\n',name, name);
-									fprintf(prov, "<head>\n\t<meta charset='UTF-8'>\n</head>\n<body>");
-									fprintf(prov, "<h1>%s</h1>\n",name);
-									BEGIN PROVERBIOS;
+									fprintf(iProv, "<li><a href=\"tipos/%s.html\">%s</a></li>\n",title, title);
+									beginPage(prov, title);
+									free(title);
+									BEGIN PROVLIST;
 									}
 }
 
-<PROVERBIOS>{
-\#redirect 							{fprintf(prov,"Redireciona<br>"); printf("Fiz coisas %d\n", yylineno);}
-\*\s?								{BEGIN PROV; fprintf(prov,"“");}
-\<\/page\>                       	{BEGIN PAGE; fprintf(prov, "</body>"); fclose(prov);}
+<PROVLIST>{
+\<redirect							{BEGIN PAGE; red++;}
+^\*.*\[http							{}
+^\*\*\ '''Alternativos:'''			{ fprintf(prov, "Alternativos:<br>");}
+^\*\*\ '''Adulteração:'''			{ fprintf(prov, "Adulteração:<br>");}
+^\*\*\*								{BEGIN PROV; fprintf(prov, "-> "); beginCit(prov);}
+^\*\s?								{BEGIN PROV; beginCit(prov);}
+\<\/page\>                       	{BEGIN PAGE; endCit(prov); fclose(prov);}
 }
 
 <PROV>{
-\n									{BEGIN PROVERBIOS; fprintf(prov,"”<br>");}
 \*|'|&quot;							{}
-\[\[								{inProv = 1; current = prov; BEGIN LINK;}
+\n									{BEGIN PROVLIST; endCit(prov); provCount++;}
+\[\[								{currentCont = PROV; current = prov; BEGIN LINK;}
 .|\n								{fprintf(prov,"%s",yytext);}
 }
 
@@ -58,45 +92,48 @@
 									char* name = strdup(yytext);
 									sprintf(filename,"citacoes/autores/%s.html",name);
 									cit = fopen(filename,"w");
-									fprintf(iCit, '<li><a href="autores/%s.html">%s</a></li>\n',name, name);
-									fprintf(cit, "<head>\n\t<meta charset='UTF-8'>\n</head>\n<body>");
-									fprintf(cit, "<h1>%s</h1>\n",name); 
+									fprintf(iCit, "<li><a href=\"autores/%s.html\">%s</a></li>\n",name, name);
+									beginPage(cit, name);
 									BEGIN CITACOES;
 									}
 }
 
 <CITACOES>{
-\*\ ?('*(&quot;)+'*\ ?|\“)      	{BEGIN QUOTE; fprintf(cit,"“");}
-\<\/page\>                        	{BEGIN PAGE; fprintf(cit, "</body>"); fclose(cit);}
+\*\ ?('*(&quot;)+'*\ ?|\“)      	{BEGIN QUOTE; beginCit(cit);}
+\<\/page\>                        	{BEGIN PAGE; endCit(cit); fclose(cit);}
 }
 
 <QUOTE>{
 \n\ *:\ +							{BEGIN DIALOG; fprintf(cit,"<br>");}
-\n		 							{BEGIN CITACOES; fprintf(cit,"”<br>");}
-&quot;|\”|\“|'|\*|«|»				{}
-\[\[								{inProv = 0; current = cit; BEGIN LINK;}
+\n		 							{BEGIN CITACOES; endCit(cit); citCount++;}
+&quot;|\”|\“|'|\*|«|»|’				{}
+\[\[								{currentCont = QUOTE; current = cit; BEGIN LINK;}
 .|\n								{fprintf(cit,"%s",yytext);}
 }
 
 <DIALOG>{
-(\n\ *:+\ *)-+|'*&quot;		  		{fprintf(cit,"”"); fprintf(cit,"</br>"); BEGIN AUTOR;}
+(\n\ *:+\ *)-+|'*&quot;		  		{endCit(cit); BEGIN AUTOR;}
 . 									{fprintf(cit,"%s",yytext);} 
 \n 									{fprintf(cit,"</br>");}
 }
 
 <LINK>{
-\]\]								{if(inProv) BEGIN PROV; else BEGIN QUOTE;}
+\]\]								{BEGIN currentCont;}
 \| 									{BEGIN INLINK;}
 .|\n								{fprintf(current,"%s",yytext);}
 }
 
 <INLINK>{
-\]\]								{if(inProv) BEGIN PROV; else BEGIN QUOTE;}
+\]\]								{BEGIN currentCont;}
+.|\n								{fprintf(current,"%s",yytext);}
 }
 
 <*>.|\n 							{}
 
 %%
+
+
+
 
 int main(int argc, char* argv[]){
 	//if(argc == 1){ 
@@ -106,15 +143,18 @@ int main(int argc, char* argv[]){
 		yyin = fopen("ptwikiquote-20190301-pages-articles.xml", "r");
 		iCit = fopen ("citacoes/index.html","w"); 
 		iProv = fopen ("proverbios/index.html","w"); 
-		fprintf(iCit, "<head>\n\t<meta charset='UTF-8'>\n</head>\n<body>");
-		fprintf(iProv, "<head>\n\t<meta charset='UTF-8'>\n</head>\n<body>");
+		fprintf(iCit, "<head>\n\t<meta charset='UTF-8'>\n</head>\n<body>\n<ul>");
+		fprintf(iProv, "<head>\n\t<meta charset='UTF-8'>\n</head>\n<body>\n<ul>");
 		yylex();
-		fprintf(iCit, "</body>");
-		fprintf(iProv, "</body>");
+		fprintf(iCit, "</ul>\n</body>");
+		fprintf(iProv, "</ul>\n</body>");
 
 		fclose(yyin);
 		fclose(iCit);
 		fclose(iProv);
+		printf("Páginas de provérbios que redirecionam para outra: %d.\n", red);
+		printf("Foram encontradas %d citações.\n", citCount);
+		printf("Foram encontrados %d provérbios divididos em %d categorias.\n", provCount, provCatCount);
 	//}
 	return 0;
 }
