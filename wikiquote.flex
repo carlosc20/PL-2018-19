@@ -1,8 +1,18 @@
+%{
+#include <string.h>
+#include <glib.h>
+GPtrArray* autores;
+GPtrArray* regioes;
+%}
 %option yylineno
 %option noyywrap
 %{
 FILE *cit, *prov, *iCit, *iProv;
 FILE *current;
+
+char linkP[128];
+int size = 0;
+
 int currentCont;
 char* title;
 
@@ -36,7 +46,7 @@ void beginPage(FILE* file, const char* t) {
 }
 
 %}
-%x PAGE PROVLIST PROVTITLE PROVHEADER PROV AUTOR QUOTE DIALOG LINK INLINK NAME CITACOES 
+%x PAGE PROVLIST PROVTITLE PROVHEADER PROV AUTOR QUOTE DIALOG LINK INLINK NAME CITACOES
 %%
 
 \<page\>     						{BEGIN PAGE;}
@@ -51,15 +61,14 @@ void beginPage(FILE* file, const char* t) {
 }
 
 <PROVHEADER>{
-\<redirect							{BEGIN PAGE; red++;}
+\<redirect							{BEGIN PAGE; red++; free(title);}
 \<revision							{
 									provCatCount++;
 									char filename[256];
 									sprintf(filename,"proverbios/tipos/%s.html",title);
 									prov = fopen(filename,"w");
-									fprintf(iProv, "<li><a href=\"tipos/%s.html\">%s</a></li>\n",title, title);
+									g_ptr_array_add(regioes,title);
 									beginPage(prov, title);
-									free(title);
 									BEGIN PROVLIST;
 									}
 }
@@ -76,7 +85,7 @@ void beginPage(FILE* file, const char* t) {
 <PROV>{
 \*|'|&quot;							{}
 \n									{BEGIN PROVLIST; endCit(prov); provCount++;}
-\[\[								{currentCont = PROV; current = prov; BEGIN LINK;}
+\[\[								{currentCont = PROV; current = prov; size = 0; BEGIN LINK;}
 .|\n								{fprintf(prov,"%s",yytext);}
 }
 
@@ -89,9 +98,9 @@ void beginPage(FILE* file, const char* t) {
 .*/\n								{
 	 								char filename[256];
 									char* name = strdup(yytext);
+									g_ptr_array_add(autores,name);
 									sprintf(filename,"citacoes/autores/%s.html",name);
 									cit = fopen(filename,"w");
-									fprintf(iCit, "<li><a href=\"autores/%s.html\">%s</a></li>\n",name, name);
 									beginPage(cit, name);
 									BEGIN CITACOES;
 									}
@@ -106,7 +115,7 @@ void beginPage(FILE* file, const char* t) {
 \n\ *:\ +							{BEGIN DIALOG; fprintf(cit,"<br>");}
 \n		 							{BEGIN CITACOES; endCit(cit); citCount++;}
 &quot;|\”|\“|'|\*|«|»|’				{}
-\[\[								{currentCont = QUOTE; current = cit; BEGIN LINK;}
+\[\[								{currentCont = QUOTE; current = cit; size = 0; BEGIN LINK;}
 .|\n								{fprintf(cit,"%s",yytext);}
 }
 
@@ -117,22 +126,35 @@ void beginPage(FILE* file, const char* t) {
 }
 
 <LINK>{
-\]\]								{BEGIN currentCont;}
-\| 									{BEGIN INLINK;}
-.|\n								{fprintf(current,"%s",yytext);}
-}
-
-<INLINK>{
-\]\]								{BEGIN currentCont;}
-.|\n								{fprintf(current,"%s",yytext);}
+\]\]								{linkP[size] = '\0'; fprintf(current,"%s\n",linkP); BEGIN currentCont;}
+\| 									{size=0;}
+.|\n								{linkP[size] = yytext[0]; size++;}
 }
 
 <*>.|\n 							{}
 
 %%
+gint strcompare(gconstpointer fst, gconstpointer snd){
+    char* f = *((char**)fst);
+    char* s = *((char**)snd);
+    return strcmp(f,s);
+}
 
+int printRefsCits(char* value){
+	if(strlen(value)!=0)
+		fprintf(iCit, "<li><a href=\"autores/%s.html\">%s</a></li>\n", value, value); 
+} 
 
+int printRefsProv(char* value){
+	if(strlen(value)!=0)
+		fprintf(iProv, "<li><a href=\"tipos/%s.html\">%s</a></li>\n", value, value); 
+} 
 
+int printIndex(FILE* f, GPtrArray* list, int (*function) ()){
+	fprintf(f, "<head>\n\t<meta charset='UTF-8'>\n</head>\n<body>\n<ul>");
+	g_ptr_array_foreach(list, (GFunc) function, NULL); 
+	fprintf(f, "</ul>\n</body>");
+}
 
 int main(int argc, char* argv[]){
 	//if(argc == 1){ 
@@ -141,13 +163,14 @@ int main(int argc, char* argv[]){
 	//else{
 		yyin = fopen("ptwikiquote-20190301-pages-articles.xml", "r");
 		iCit = fopen ("citacoes/index.html","w"); 
-		iProv = fopen ("proverbios/index.html","w"); 
-		fprintf(iCit, "<head>\n\t<meta charset='UTF-8'>\n</head>\n<body>\n<ul>");
-		fprintf(iProv, "<head>\n\t<meta charset='UTF-8'>\n</head>\n<body>\n<ul>");
+		iProv = fopen ("proverbios/index.html","w");
+		autores = g_ptr_array_new();
+		regioes = g_ptr_array_new(); 
 		yylex();
-		fprintf(iCit, "</ul>\n</body>");
-		fprintf(iProv, "</ul>\n</body>");
-
+		g_ptr_array_sort(autores,(GCompareFunc) strcompare);
+		g_ptr_array_sort(regioes,(GCompareFunc) strcompare);
+		printIndex(iProv, regioes, printRefsProv);
+		printIndex(iCit, autores, printRefsCits);
 		fclose(yyin);
 		fclose(iCit);
 		fclose(iProv);

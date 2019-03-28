@@ -1,7 +1,6 @@
 ptwikiquote: wikiquote.flex
 	flex wikiquote.flex
-	cc -o wikiquote lex.yy.c
-	# gcc -o wikiquote lex.yy.c `pkg-config --cflags --libs glib-2.0` -lglib-2.0
+	gcc -o wikiquote lex.yy.c `pkg-config --cflags --libs glib-2.0` -lglib-2.0
 
 install: wikiquote
 	cp -f wikiquote /usr/local/bin/
