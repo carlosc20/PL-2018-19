@@ -65,13 +65,12 @@ void beginPage(FILE* file, const char* t) {
 }
 
 <PROVLIST>{
-\<redirect							{BEGIN PAGE; red++;}
 ^\*.*\[http							{}
-^\*\*\ '''Alternativos:'''			{ fprintf(prov, "Alternativos:<br>");}
-^\*\*\ '''Adulteração:'''			{ fprintf(prov, "Adulteração:<br>");}
+^\*\*\ '''Alternativos:'''			{fprintf(prov, "Alternativos:<br>");}
+^\*\*\ '''Adulteração:'''			{fprintf(prov, "Adulteração:<br>");}
 ^\*\*\*								{BEGIN PROV; fprintf(prov, "-> "); beginCit(prov);}
-^\*\s?								{BEGIN PROV; beginCit(prov);}
-\<\/page\>                       	{BEGIN PAGE; endCit(prov); fclose(prov);}
+^\*									{BEGIN PROV; beginCit(prov);}
+\<\/page\>                       	{BEGIN PAGE; fclose(prov);}
 }
 
 <PROV>{
@@ -100,7 +99,7 @@ void beginPage(FILE* file, const char* t) {
 
 <CITACOES>{
 \*\ ?('*(&quot;)+'*\ ?|\“)      	{BEGIN QUOTE; beginCit(cit);}
-\<\/page\>                        	{BEGIN PAGE; endCit(cit); fclose(cit);}
+\<\/page\>                        	{BEGIN PAGE; fclose(cit);}
 }
 
 <QUOTE>{
