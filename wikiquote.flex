@@ -85,7 +85,7 @@ void printAndFree(){
     l = g_list_sort (l, (GCompareFunc) counterCmp);
     g_list_foreach(l,(GFunc) printEntry, NULL);
 	
-	//g_hash_table_destroy(palavras);
+	g_hash_table_destroy(palavras);
 	g_list_free(l);
 }
 
@@ -186,15 +186,15 @@ void incrCounter(char* text){
 
 <DIALOG>{
 (\n\ *:+\ *)-+|'*&quot;		  		{endCit(cit); BEGIN AUTOR;}
-{P} 								{fprintf(cit,"%s",yytext); incrCounter(yytext);}
-[\ ,.?!']*							{fprintf(cit,"%s",yytext);}
+{P} 								{fprintf(cit,"%s",yytext);}
+[\ ,.?!']*							{fprintf(cit,"%s",yytext); incrCounter(yytext);}
 \n 									{fprintf(cit,"</br>");}
 }
 
 <LINK>{
 \]\]								{BEGIN currentCtx; }
 [^\|\]]*\|							{}
-[^\ \]]+							{fprintf(current,"%s",yytext); incrCounter(yytext);}
+[^\ \]]+							{fprintf(current,"%s",yytext); if(currentCtx == QUOTE) incrCounter(yytext);}
 }
 
 <*>.|\n 							{}
