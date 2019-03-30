@@ -163,33 +163,44 @@ int printRefsProv(char* value){
 } 
 
 int printIndex(FILE* f, GPtrArray* list, int (*function) ()){
-	fprintf(f, "<head>\n\t<meta charset='UTF-8'>\n</head>\n<body>\n<ul>");
+	fprintf(f, "<ul>\n");
 	g_ptr_array_foreach(list, (GFunc) function, NULL); 
-	fprintf(f, "</ul>\n</body>");
+	fprintf(f, "</ul>\n");
 }
 
 int main(int argc, char* argv[]){
-	//if(argc == 1){ 
-	//	yylex();
-	//}
-	//else{
-		yyin = fopen("ptwikiquote-20190301-pages-articles.xml", "r");
+	if(argc == 1){ 
+		yylex();
+	}
+	else{
+		yyin = fopen(argv[1], "r");
 		iCit = fopen ("citacoes/index.html","w"); 
 		iProv = fopen ("proverbios/index.html","w");
+		if(!yyin || !iCit || !iProv) {
+			printf("Erro ao abrir/criar os ficheiros necessários.\n");
+			return 1;
+		}
 		autores = g_ptr_array_new();
 		regioes = g_ptr_array_new(); 
 		yylex();
+		fclose(yyin);
 		g_ptr_array_sort(autores,(GCompareFunc) strcompare);
 		g_ptr_array_sort(regioes,(GCompareFunc) strcompare);
+
+		fprintf(iCit, "<head>\n\t<meta charset='UTF-8'>\n</head>\n<body>\n<h1>Citações</h1>\n");
+		fprintf(iCit, "%d citações de %d autores.\n", citCount, autores->len);
 		printIndex(iCit, autores, printRefsCits);
-		printIndex(iProv, regioes, printRefsProv);
-		fclose(yyin);
+		fprintf(iCit, "</body>\n");
 		fclose(iCit);
+
+		fprintf(iProv, "<head>\n\t<meta charset='UTF-8'>\n</head>\n<body>\n<h1>Provérbios</h1>\n");
+		fprintf(iProv, "%d provérbios de %d línguas/regiões.\n", provCount, regioes->len);
+		printIndex(iProv, regioes, printRefsProv);
+		fprintf(iProv, "</body>\n");
 		fclose(iProv);
-		printf("Foram encontradas %d citações de %d autores.\n", citCount, autores->len);
-		printf("Foram encontrados %d provérbios de %d línguas/regiões.\n", provCount, regioes->len);
-		printf("%d páginas de provérbios redirecionam para outras.\n", redirect);
-	//}
+		
+		printf("%d páginas de provérbios redirecionam para outras.\n", redirect);	
+	}
 	return 0;
 }
 
