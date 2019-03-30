@@ -3,15 +3,16 @@
 #include <glib.h>
 GPtrArray* autores;
 GPtrArray* regioes;
+GHashTable* palavras;
 %}
 %option yylineno
 %option noyywrap
-%{
-FILE *cit, *prov, *iCit, *iProv;
-FILE *current;
 
-char linkP[128];
-int size = 0;
+D 		(\”|\“|'|\*|«|»|’|”)
+P 		[^\ \t&,.?!'\n\[D]+
+%{
+FILE *cit, *prov, *iCit, *iProv, *beta;
+FILE *current;
 
 int currentCont;
 char* title;
@@ -28,7 +29,7 @@ int citCount = 0;
 :::- &quot;Provérbio alternativo 1.&quot;
 :::- &quot;Provérbio alternativo 2.&quot;
 ::- Notas sobre o contexto, informações adicionais caso o significado não esteja claro, etc.
-
+(\[\[[^\|(\[\[)]*\|)|\[\[ ---> ver para o caso em que spama muitos [[][][]]
 
 quantos formatos existem
 */
@@ -44,7 +45,6 @@ void endCit(FILE* file) {
 void beginPage(FILE* file, const char* t) {
 	fprintf(file, "<head>\n\t<meta charset='UTF-8'>\n</head>\n<body>\n<h1>%s</h1>\n", t);
 }
-
 %}
 %x PAGE PROVLIST PROVTITLE PROVHEADER PROV AUTOR QUOTE DIALOG LINK INLINK NAME CITACOES
 %%
@@ -83,9 +83,9 @@ void beginPage(FILE* file, const char* t) {
 }
 
 <PROV>{
-\*|'|&quot;							{}
+\*|'|”|&quot;						{}
 \n									{BEGIN PROVLIST; endCit(prov); provCount++;}
-\[\[								{currentCont = PROV; current = prov; size = 0; BEGIN LINK;}
+\[\[								{currentCont = PROV; current = prov; BEGIN LINK;}
 .|\n								{fprintf(prov,"%s",yytext);}
 }
 
@@ -114,26 +114,29 @@ void beginPage(FILE* file, const char* t) {
 <QUOTE>{
 \n\ *:\ +							{BEGIN DIALOG; fprintf(cit,"<br>");}
 \n		 							{BEGIN CITACOES; endCit(cit); citCount++;}
-&quot;|\”|\“|'|\*|«|»|’				{}
-\[\[								{currentCont = QUOTE; current = cit; size = 0; BEGIN LINK;}
-.|\n								{fprintf(cit,"%s",yytext);}
+&quot;|{D}							{}
+\[\[								{currentCont = QUOTE; current = cit; BEGIN LINK;}
+{P}									{fprintf(cit,"%s",yytext);}
+[\ ,.?!']*        					{fprintf(cit,"%s",yytext);}
 }
 
 <DIALOG>{
 (\n\ *:+\ *)-+|'*&quot;		  		{endCit(cit); BEGIN AUTOR;}
-. 									{fprintf(cit,"%s",yytext);} 
+{P} 								{fprintf(cit,"%s",yytext);}
+[\ ,.?!']*							{fprintf(cit,"%s",yytext);}
 \n 									{fprintf(cit,"</br>");}
 }
 
 <LINK>{
-\]\]								{linkP[size] = '\0'; fprintf(current,"%s\n",linkP); BEGIN currentCont;}
-\| 									{size=0;}
-.|\n								{linkP[size] = yytext[0]; size++;}
+\]\]								{BEGIN currentCont; }
+[^\|\]]*\|							{}
+[^\ \]]+							{fprintf(current,"%s",yytext);}
 }
 
 <*>.|\n 							{}
 
 %%
+
 gint strcompare(gconstpointer fst, gconstpointer snd){
     char* f = *((char**)fst);
     char* s = *((char**)snd);
@@ -174,6 +177,7 @@ int main(int argc, char* argv[]){
 		fclose(yyin);
 		fclose(iCit);
 		fclose(iProv);
+		//fclose(beta);
 		printf("Páginas de provérbios que redirecionam para outra: %d.\n", red);
 		printf("Foram encontradas %d citações.\n", citCount);
 		printf("Foram encontrados %d provérbios divididos em %d categorias.\n", provCount, provCatCount);
