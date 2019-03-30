@@ -4,6 +4,12 @@
 GPtrArray* autores;
 GPtrArray* regioes;
 GHashTable* palavras;
+
+typedef struct count{
+  char* pal;
+  int* c;
+} *Counter;
+
 %}
 %option yylineno
 %option noyywrap
@@ -33,7 +39,6 @@ int citCount = 0;
 (\[\[[^\|(\[\[)]*\|)|\[\[ ---> ver para o caso em que spama muitos [[][][]]
 
 */
-
 void beginCit(FILE* file) {
 	fprintf(file,"<li>“");
 }
@@ -48,6 +53,55 @@ void beginPage(FILE* file, const char* t) {
 
 void endPage(FILE* file) {
 	fprintf(file, "</ul>\n</body>");
+}
+
+void freeStr(gpointer data){
+	char* str = (char*) data;
+	free(str);
+}
+
+void freeCounter (gpointer data){
+  Counter count = (Counter) data;
+  free(count->c);
+  free(count);
+}
+
+int counterCmp (gconstpointer p1, gconstpointer p2){
+    Counter c1 = (Counter) p1;
+    Counter c2 = (Counter) p2;
+    return *c2->c - *c1->c ;
+}
+
+int printEntry(Counter value) {
+  fprintf(cit,"<li>");
+  fprintf(cit,"%s --> %d", value->pal, *value->c);
+  fprintf(cit,"</li>");
+  endCit(cit);
+  return 0;
+}
+
+void printAndFree(){
+	GList* l = g_hash_table_get_values(palavras);  
+    l = g_list_sort (l, (GCompareFunc) counterCmp);
+    g_list_foreach(l,(GFunc) printEntry, NULL);
+	
+	//g_hash_table_destroy(palavras);
+	g_list_free(l);
+}
+
+void incrCounter(char* text){
+	char* palavra = strdup(text);
+	Counter count = g_hash_table_lookup(palavras,palavra);
+	if(count==NULL){
+    	Counter count = malloc (sizeof(struct count));
+		count -> c = g_new0 (gint, 1);
+    	*count -> c = 1;
+    	count -> pal = palavra;
+		g_hash_table_insert(palavras, palavra, count);
+	}
+	else{ 
+		++*(count->c); 
+	}
 }
 %}
 %x PAGE PROVLIST PROVTITLE PROVHEADER PROV AUTOR QUOTE DIALOG LINK NAME CITACOES
@@ -105,6 +159,7 @@ void endPage(FILE* file) {
 
 <NAME>{
 .*/\n								{
+									palavras = g_hash_table_new_full(g_str_hash,g_str_equal, &freeStr, &freeCounter);
 	 								char filename[256];
 									char* name = strdup(yytext);
 									g_ptr_array_add(autores,name);
@@ -117,7 +172,7 @@ void endPage(FILE* file) {
 
 <CITACOES>{
 \*\ ?('*(&quot;)+'*\ ?|\“)      	{BEGIN QUOTE; beginCit(cit);}
-\<\/page\>                        	{BEGIN PAGE;  endPage(cit); fclose(cit);}
+\<\/page\>                        	{BEGIN PAGE; printAndFree(); endPage(cit); fclose(cit);}
 }
 
 <QUOTE>{
@@ -125,13 +180,13 @@ void endPage(FILE* file) {
 \n		 							{BEGIN CITACOES; endCit(cit); citCount++;}
 &quot;|{D}							{}
 \[\[								{currentCtx = QUOTE; current = cit; BEGIN LINK;}
-{P}									{fprintf(cit,"%s",yytext);}
+{P}									{fprintf(cit,"%s",yytext); incrCounter(yytext);}
 [\ ,.?!']*        					{fprintf(cit,"%s",yytext);}
 }
 
 <DIALOG>{
 (\n\ *:+\ *)-+|'*&quot;		  		{endCit(cit); BEGIN AUTOR;}
-{P} 								{fprintf(cit,"%s",yytext);}
+{P} 								{fprintf(cit,"%s",yytext); incrCounter(yytext);}
 [\ ,.?!']*							{fprintf(cit,"%s",yytext);}
 \n 									{fprintf(cit,"</br>");}
 }
@@ -139,7 +194,7 @@ void endPage(FILE* file) {
 <LINK>{
 \]\]								{BEGIN currentCtx; }
 [^\|\]]*\|							{}
-[^\ \]]+							{fprintf(current,"%s",yytext);}
+[^\ \]]+							{fprintf(current,"%s",yytext); incrCounter(yytext);}
 }
 
 <*>.|\n 							{}
