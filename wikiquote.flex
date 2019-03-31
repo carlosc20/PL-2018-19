@@ -9,21 +9,22 @@ typedef struct count{
   char* pal;
   int* c;
 } *Counter;
-//[’–]
+//[’–] 8090
 %}
 %option yylineno
 %option noyywrap
 
-D 		('|\*|«|»|’|”|“|\"|&quot;)
+D 		('|\*|«|»|’|”|“|\"|&quot;|\{|\})
 P 		[^\ \&,.?"!\n\[]+
 %{
-FILE *cit, *prov, *iCit, *iProv;
+FILE *cit, *prov, *iCit, *iProv, *geral;
 FILE *current;
 
 int currentCtx;
 char* title;
 
 int alt = 0;
+int g = 0;
 
 int redirect = 0;
 int provCount = 0;
@@ -73,7 +74,7 @@ int printEntry(Counter value) {
   return 0;
 }
 
-void printAndFree(){
+void printAndFree( ){
     fprintf(cit,"<h3>Palavras ordenadas por número de ocorrências:</h3>");
 	GList* l = g_hash_table_get_values(palavras);  
     l = g_list_sort (l, (GCompareFunc) counterCmp);
@@ -98,14 +99,15 @@ void incrCounter(char* text){
 	}
 }
 %}
-%x PAGE PROVLIST PROVTITLE PROVHEADER PROV AUTOR QUOTE DIALOG LINK NAME CITACOES
+%x PAGE PROVLIST PROVTITLE PROVHEADER PROV AUTOR QUOTE DIALOG LINK INSIDEL NAME CITACOES
 %%
 
 \<page\>     									{BEGIN PAGE;}
 
 <PAGE>{
 \<title\>Provérbios\ 							{BEGIN PROVTITLE;}
-\<text\ xml:.*Autor  							{BEGIN AUTOR;}
+\<text\ xml:.*Autor  							{g=0; BEGIN AUTOR;}
+\*\ ?('*(&quot;)+'*\ ?|\“)        {current = geral; g=1; BEGIN QUOTE;}
 }
 
 <PROVTITLE>{
@@ -165,7 +167,7 @@ void incrCounter(char* text){
                                                 if(words < small) small = words;
                                                 }
 \[\[											{currentCtx = PROV; current = prov; BEGIN LINK;}
-{P}												{fprintf(prov,"%s",yytext); printf("%s\n",yytext); words++;}
+{P}												{fprintf(prov,"%s",yytext); words++;}
 [\ ,.?!]*        								{fprintf(prov,"%s",yytext);}
 }
 
@@ -184,15 +186,16 @@ void incrCounter(char* text){
                                                 cit = fopen(filename,"w");
                                                 beginPage(cit, name);
                                                 count = 0; totalWords = 0; big = 0; small = 256;
+                                                current = cit;
                                                 BEGIN CITACOES;
                                                 }
 }
 
 <CITACOES>{
-\*\ ?('*(&quot;)+'*\ ?|\“)      	            {BEGIN QUOTE; beginCit(cit); words = 0;}
+\*\ ?('*(&quot;)+'*\ ?|\“)      	            {BEGIN QUOTE; beginCit(current); words = 0;}
 \<\/page\>                                      {
                                                 BEGIN PAGE; 
-                                                if(count > 0) {
+                                                if(count > 0 && g==0) {
                                                     fprintf(cit, "<h3>Citações: %d<br>\n \
                                                     Número de palavras:<ul>\n \
                                                     <li>total-> %d</li>\n \
@@ -202,39 +205,39 @@ void incrCounter(char* text){
                                                     count, totalWords, (float)totalWords/count, big, small); 
                                                     printAndFree();
                                                     citCount += count;
-                                                } 
-                                                endPage(cit); 
-                                                fclose(cit);
+                                                    endPage(cit); 
+                                                    fclose(cit);
+                                                  } 
                                                 }
 }
 
 <QUOTE>{
-\n\ *:\ +										{BEGIN DIALOG; fprintf(cit,"<br>");}
+\n\ *:\ +										{BEGIN DIALOG; fprintf(current,"<br>");}
 \n		 										{
                                                 BEGIN CITACOES;
-                                                endCit(cit); 
+                                                endCit(current); 
                                                 count++; 
                                                 totalWords += words;
                                                 if(words > big) big = words;
                                                 if(words < small) small = words;
                                                 }
 &quot;|{D}										{}
-\[\[											{currentCtx = QUOTE; current = cit; BEGIN LINK;}
-{P}												{fprintf(cit,"%s",yytext); incrCounter(yytext); words++;}
-[\ ,-.?!']*        								{fprintf(cit,"%s",yytext);}
+\[\[											{currentCtx = QUOTE ; BEGIN LINK;}
+{P}												{fprintf(current,"%s",yytext); if(g==0) incrCounter(yytext); words++;}
+[\ ,-.?!']*        								{fprintf(current,"%s",yytext);}
 }
 
 <DIALOG>{
-(\n\ *:+\ *)-+|'*&quot;		  			        {endCit(cit); BEGIN AUTOR;}
-{P} 											{fprintf(cit,"%s",yytext);}
-[\ ,-.?!']*										{fprintf(cit,"%s",yytext); incrCounter(yytext); words++;}
-\n 												{fprintf(cit,"</br>");}
+(\n\ *:+\ *)-+|'*&quot;		 {endCit(current); BEGIN CITACOES;}
+{P} 											{fprintf(current,"%s",yytext);}
+[\ ,-.?!']*								{fprintf(current,"%s",yytext); if(g==0) incrCounter(yytext); words++;}
+\n 												{fprintf(current,"</br>");}
 }
 
 <LINK>{
-\]\]											{BEGIN currentCtx; }
-[^\|\]]*\|										{}
-[^\ \]]+										{fprintf(current,"%s",yytext); if(currentCtx == QUOTE) incrCounter(yytext);}
+\]\]											  {BEGIN currentCtx;}
+[^\ ]*\|									  {}
+[^\ \|\]]+									{fprintf(current,"%s",yytext); if(currentCtx == QUOTE && g==0) incrCounter(yytext);}
 }
 
 <*>.|\n 										{}
@@ -263,6 +266,10 @@ int printIndex(FILE* f, GPtrArray* list, int (*function) ()){
 	fprintf(f, "</ul>\n");
 }
 
+int printGeral(){
+  fprintf(iCit, "<li><a href=\"autores/geral.html\">geral</a></li>\n");
+}
+
 int main(int argc, char* argv[]){
 	if(argc == 1){ 
 		yylex();
@@ -271,6 +278,7 @@ int main(int argc, char* argv[]){
 		yyin = fopen(argv[1], "r");
 		iCit = fopen ("citacoes/index.html","w"); 
 		iProv = fopen ("proverbios/index.html","w");
+    geral = fopen ("citacoes/autores/geral.html","w");
 		if(!yyin || !iCit || !iProv) {
 			printf("Erro ao abrir/criar os ficheiros necessários.\n");
 			return 1;
@@ -284,9 +292,11 @@ int main(int argc, char* argv[]){
 
 		fprintf(iCit, "<head>\n\t<meta charset='UTF-8'>\n</head>\n<body>\n<h1>Citações</h1>\n");
 		fprintf(iCit, "<h3>%d citações de %d autores.</h3>\n", citCount, autores->len);
+    printGeral();
 		printIndex(iCit, autores, printRefsCits);
 		fprintf(iCit, "</body>\n");
 		fclose(iCit);
+    fclose(geral);
 
 		fprintf(iProv, "<head>\n\t<meta charset='UTF-8'>\n</head>\n<body>\n<h1>Provérbios</h1>\n");
 		fprintf(iProv, "<h3>%d provérbios de %d línguas/regiões.</h3>\n", provCount, regioes->len);
