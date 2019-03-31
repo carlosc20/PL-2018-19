@@ -34,22 +34,12 @@ int big = 0;
 int small = 256;
 int totalWords = 0;
 
- /* 
- '''
- * ''&quot;Provérbio em português moderno.&quot;
-::- '''Alternativos:'''
-:::- &quot;Provérbio alternativo 1.&quot;
-:::- &quot;Provérbio alternativo 2.&quot;
-::- Notas sobre o contexto, informações adicionais caso o significado não esteja claro, etc.
-(\[\[[^\|(\[\[)]*\|)|\[\[ ---> ver para o caso em que spama muitos [[][][]]
-
-*/
 void beginCit(FILE* file) {
 	fprintf(file,"<li>“");
 }
 
 void endCit(FILE* file) {
-	fprintf(file,"”</li>");
+	fprintf(file,"”</li>\n");
 }
 
 void beginPage(FILE* file, const char* t) {
@@ -130,6 +120,7 @@ void incrCounter(char* text){
                                                 prov = fopen(filename,"w");
                                                 g_ptr_array_add(regioes,title);
                                                 beginPage(prov, title);
+                                                count = 0; totalWords = 0; big = 0; small = 256;
                                                 BEGIN PROVLIST;
                                                 }
 }
@@ -139,25 +130,43 @@ void incrCounter(char* text){
 ^\*+\ *\n										{}
 ^\*\*\ '''Alternativos:'''				        {if(alt) {fprintf(prov, "</ul>");}; fprintf(prov, "Alternativos:\n<ul>"); alt = 1;}
 ^\*\*\ '''Adulteração:'''					    {if(alt) {fprintf(prov, "</ul>");}; fprintf(prov, "Adulteração:\n<ul>"); alt = 1;}
-^\*\*   										{BEGIN PROV; beginCit(prov);}
-^\*\*\*											{BEGIN PROV; beginCit(prov);}
-^'''											{BEGIN PROV; beginCit(prov);}
-^:'''											{BEGIN PROV; beginCit(prov);}
-^::''											{BEGIN PROV; beginCit(prov);}
+^\*\*   										{BEGIN PROV; beginCit(prov); words = 0;}
+^\*\*\*											{BEGIN PROV; beginCit(prov); words = 0;}
+^'''											{BEGIN PROV; beginCit(prov); words = 0;}
+^:'''											{BEGIN PROV; beginCit(prov); words = 0;}
+^::''											{BEGIN PROV; beginCit(prov); words = 0;}
 ^\*\ \[\[.*\]\]\n								{}
-^\*												{BEGIN PROV; if(alt) {fprintf(prov, "</ul>"); alt = 0;}; beginCit(prov);}
+^\*												{BEGIN PROV; if(alt) {fprintf(prov, "</ul>"); alt = 0;}; beginCit(prov); words = 0;}
 \<\/page\>                       	            {
                                                 BEGIN PAGE; 
+                                                if(count > 0) {
+                                                    fprintf(prov, "<h3>Provérbios: %d<br>\n \
+                                                    Número de palavras:<ul>\n \
+                                                    <li>total-> %d</li>\n \
+                                                    <li>médio-> %g</li>\n \
+                                                    <li>maior-> %d</li>\n \
+                                                    <li>menor-> %d</li>\n</ul></h3>",
+                                                    count, totalWords, (float)totalWords/count, big, small); 
+                                                    provCount += count;
+                                                } 
                                                 endPage(prov);
                                                 fclose(prov);
                                                 }
 }
 
 <PROV>{
-{D}												{}
-\n												{BEGIN PROVLIST; endCit(prov); provCount++;}
+&quot;|{D}										{}												
+\n												{
+                                                BEGIN PROVLIST; 
+                                                endCit(prov); 
+                                                count++; 
+                                                totalWords += words;
+                                                if(words > big) big = words;
+                                                if(words < small) small = words;
+                                                }
 \[\[											{currentCtx = PROV; current = prov; BEGIN LINK;}
-.|\n											{fprintf(prov,"%s",yytext);}
+{P}												{fprintf(prov,"%s",yytext); words++;}
+[\ ,-.?!']*        								{fprintf(prov,"%s",yytext);}
 }
 
 <AUTOR>{
