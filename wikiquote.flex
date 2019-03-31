@@ -9,13 +9,13 @@ typedef struct count{
   char* pal;
   int* c;
 } *Counter;
-
+//[’–]
 %}
 %option yylineno
 %option noyywrap
 
 D 		('|\*|«|»|’|”|“|\"|&quot;)
-P 		[^\ \t&,-.?”“"’!'\n\[D]+
+P 		[^\ \&,.?"!\n\[]+
 %{
 FILE *cit, *prov, *iCit, *iProv;
 FILE *current;
@@ -155,7 +155,7 @@ void incrCounter(char* text){
 }
 
 <PROV>{
-&quot;|{D}										{}												
+&quot;										{}												
 \n												{
                                                 BEGIN PROVLIST; 
                                                 endCit(prov); 
@@ -165,12 +165,12 @@ void incrCounter(char* text){
                                                 if(words < small) small = words;
                                                 }
 \[\[											{currentCtx = PROV; current = prov; BEGIN LINK;}
-{P}												{fprintf(prov,"%s",yytext); words++;}
-[\ ,-.?!']*        								{fprintf(prov,"%s",yytext);}
+{P}												{fprintf(prov,"%s",yytext); printf("%s\n",yytext); words++;}
+[\ ,.?!]*        								{fprintf(prov,"%s",yytext);}
 }
 
 <AUTOR>{
-\|\ *Wikipedia\ *=\ *	 						{BEGIN NAME;}
+\|\ *Wikipedia\ *=\ *	 													{BEGIN NAME;}
 \<\/page\>                                      {BEGIN PAGE;}
 }
 
