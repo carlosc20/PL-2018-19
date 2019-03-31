@@ -28,6 +28,11 @@ int alt = 0;
 int redirect = 0;
 int provCount = 0;
 int citCount = 0;
+int count = 0;
+int words = 0;
+int big = 0;
+int small = 256;
+int totalWords = 0;
 
  /* 
  '''
@@ -73,12 +78,13 @@ int counterCmp (gconstpointer p1, gconstpointer p2){
 }
 
 int printEntry(Counter value) {
-  fprintf(cit,"%s --> %d", value->pal, *value->c);
+  fprintf(cit,"%d - %s", *value->c, value->pal);
   fprintf(cit,"<br>");
   return 0;
 }
 
 void printAndFree(){
+    fprintf(cit,"<h3>Palavras ordenadas por número de ocorrências:</h3>");
 	GList* l = g_hash_table_get_values(palavras);  
     l = g_list_sort (l, (GCompareFunc) counterCmp);
     g_list_foreach(l,(GFunc) printEntry, NULL);
@@ -105,7 +111,7 @@ void incrCounter(char* text){
 %x PAGE PROVLIST PROVTITLE PROVHEADER PROV AUTOR QUOTE DIALOG LINK NAME CITACOES
 %%
 
-\<page\>     											{BEGIN PAGE;}
+\<page\>     									{BEGIN PAGE;}
 
 <PAGE>{
 \<title\>Provérbios\ 							{BEGIN PROVTITLE;}
@@ -113,89 +119,116 @@ void incrCounter(char* text){
 }
 
 <PROVTITLE>{
-.*/\<\/title\>                    {BEGIN PROVHEADER; title = strdup(yytext);}
+.*/\<\/title\>                                  {BEGIN PROVHEADER; title = strdup(yytext);}
 }
 
 <PROVHEADER>{
-\<redirect												{BEGIN PAGE; redirect++; free(title);}
-\<revision												{
-																	char filename[256];
-																	sprintf(filename,"proverbios/tipos/%s.html",title);
-																	prov = fopen(filename,"w");
-																	g_ptr_array_add(regioes,title);
-																	beginPage(prov, title);
-																	BEGIN PROVLIST;
-									}
+\<redirect										{BEGIN PAGE; redirect++; free(title);}
+\<revision										{
+                                                char filename[256];
+                                                sprintf(filename,"proverbios/tipos/%s.html",title);
+                                                prov = fopen(filename,"w");
+                                                g_ptr_array_add(regioes,title);
+                                                beginPage(prov, title);
+                                                BEGIN PROVLIST;
+                                                }
 }
 
 <PROVLIST>{
-^\*.*\[http												{}
-^\*+\ *\n													{}
-^\*\*\ '''Alternativos:'''				{if(alt) {fprintf(prov, "</ul>");}; fprintf(prov, "Alternativos:\n<ul>"); alt = 1;}
-^\*\*\ '''Adulteração:'''					{if(alt) {fprintf(prov, "</ul>");}; fprintf(prov, "Adulteração:\n<ul>"); alt = 1;}
-^\*\*															{BEGIN PROV; beginCit(prov);}
-^\*\*\*														{BEGIN PROV; beginCit(prov);}
-^'''															{BEGIN PROV; beginCit(prov);}
-^:'''															{BEGIN PROV; beginCit(prov);}
-^::''															{BEGIN PROV; beginCit(prov);}
-^\*\ \[\[.*\]\]\n									{}
-^\*																{BEGIN PROV; if(alt) {fprintf(prov, "</ul>"); alt = 0;}; beginCit(prov);}
-\<\/page\>                       	{BEGIN PAGE;  endPage(prov); fclose(prov);}
+^\*.*\[http										{}
+^\*+\ *\n										{}
+^\*\*\ '''Alternativos:'''				        {if(alt) {fprintf(prov, "</ul>");}; fprintf(prov, "Alternativos:\n<ul>"); alt = 1;}
+^\*\*\ '''Adulteração:'''					    {if(alt) {fprintf(prov, "</ul>");}; fprintf(prov, "Adulteração:\n<ul>"); alt = 1;}
+^\*\*   										{BEGIN PROV; beginCit(prov);}
+^\*\*\*											{BEGIN PROV; beginCit(prov);}
+^'''											{BEGIN PROV; beginCit(prov);}
+^:'''											{BEGIN PROV; beginCit(prov);}
+^::''											{BEGIN PROV; beginCit(prov);}
+^\*\ \[\[.*\]\]\n								{}
+^\*												{BEGIN PROV; if(alt) {fprintf(prov, "</ul>"); alt = 0;}; beginCit(prov);}
+\<\/page\>                       	            {
+                                                BEGIN PAGE; 
+                                                endPage(prov);
+                                                fclose(prov);
+                                                }
 }
 
 <PROV>{
-{D}																{}
-\n																{BEGIN PROVLIST; endCit(prov); provCount++;}
-\[\[															{currentCtx = PROV; current = prov; BEGIN LINK;}
-.|\n															{fprintf(prov,"%s",yytext);}
+{D}												{}
+\n												{BEGIN PROVLIST; endCit(prov); provCount++;}
+\[\[											{currentCtx = PROV; current = prov; BEGIN LINK;}
+.|\n											{fprintf(prov,"%s",yytext);}
 }
 
 <AUTOR>{
 \|\ *Wikipedia\ *=\ *	 						{BEGIN NAME;}
-\<\/page\>                        {BEGIN PAGE;}
+\<\/page\>                                      {BEGIN PAGE;}
 }
 
 <NAME>{
-.*/\n															{
-																	palavras = g_hash_table_new_full(g_str_hash,g_str_equal, &freeStr, &freeCounter);
-																	char filename[256];
-																	char* name = strdup(yytext);
-																	g_ptr_array_add(autores,name);
-																	sprintf(filename,"citacoes/autores/%s.html",name);
-																	cit = fopen(filename,"w");
-																	beginPage(cit, name);
-																	BEGIN CITACOES;
-																	}
+.*/\n											{
+                                                palavras = g_hash_table_new_full(g_str_hash,g_str_equal, &freeStr, &freeCounter);
+                                                char filename[256];
+                                                char* name = strdup(yytext);
+                                                g_ptr_array_add(autores,name);
+                                                sprintf(filename,"citacoes/autores/%s.html",name);
+                                                cit = fopen(filename,"w");
+                                                beginPage(cit, name);
+                                                count = 0; totalWords = 0; big = 0; small = 256;
+                                                BEGIN CITACOES;
+                                                }
 }
 
 <CITACOES>{
-\*\ ?('*(&quot;)+'*\ ?|\“)      	{BEGIN QUOTE; beginCit(cit);}
-\<\/page\>                        {BEGIN PAGE; printAndFree(); endPage(cit); fclose(cit);}
+\*\ ?('*(&quot;)+'*\ ?|\“)      	            {BEGIN QUOTE; beginCit(cit); words = 0;}
+\<\/page\>                                      {
+                                                BEGIN PAGE; 
+                                                if(count > 0) {
+                                                    fprintf(cit, "<h3>Citações: %d<br>\n \
+                                                    Número de palavras:<ul>\n \
+                                                    <li>total-> %d</li>\n \
+                                                    <li>médio-> %g</li>\n \
+                                                    <li>maior-> %d</li>\n \
+                                                    <li>menor-> %d</li>\n</ul></h3>",
+                                                    count, totalWords, (float)totalWords/count, big, small); 
+                                                    printAndFree();
+                                                    citCount += count;
+                                                } 
+                                                endPage(cit); 
+                                                fclose(cit);
+                                                }
 }
 
 <QUOTE>{
-\n\ *:\ +													{BEGIN DIALOG; fprintf(cit,"<br>");}
-\n		 														{BEGIN CITACOES; endCit(cit); citCount++;}
-&quot;|{D}												{}
-\[\[															{currentCtx = QUOTE; current = cit; BEGIN LINK;}
-{P}																{fprintf(cit,"%s",yytext); incrCounter(yytext);}
+\n\ *:\ +										{BEGIN DIALOG; fprintf(cit,"<br>");}
+\n		 										{
+                                                BEGIN CITACOES;
+                                                endCit(cit); 
+                                                count++; 
+                                                totalWords += words;
+                                                if(words > big) big = words;
+                                                if(words < small) small = words;
+                                                }
+&quot;|{D}										{}
+\[\[											{currentCtx = QUOTE; current = cit; BEGIN LINK;}
+{P}												{fprintf(cit,"%s",yytext); incrCounter(yytext); words++;}
 [\ ,-.?!']*        								{fprintf(cit,"%s",yytext);}
 }
 
 <DIALOG>{
-(\n\ *:+\ *)-+|'*&quot;		  			{endCit(cit); BEGIN AUTOR;}
-{P} 															{fprintf(cit,"%s",yytext);}
-[\ ,-.?!']*												{fprintf(cit,"%s",yytext); incrCounter(yytext);}
-\n 																{fprintf(cit,"</br>");}
+(\n\ *:+\ *)-+|'*&quot;		  			        {endCit(cit); BEGIN AUTOR;}
+{P} 											{fprintf(cit,"%s",yytext);}
+[\ ,-.?!']*										{fprintf(cit,"%s",yytext); incrCounter(yytext); words++;}
+\n 												{fprintf(cit,"</br>");}
 }
 
 <LINK>{
-\]\]															{BEGIN currentCtx; }
-[^\|\]]*\|												{}
-[^\ \]]+													{fprintf(current,"%s",yytext); if(currentCtx == QUOTE) incrCounter(yytext);}
+\]\]											{BEGIN currentCtx; }
+[^\|\]]*\|										{}
+[^\ \]]+										{fprintf(current,"%s",yytext); if(currentCtx == QUOTE) incrCounter(yytext);}
 }
 
-<*>.|\n 													{}
+<*>.|\n 										{}
 
 %%
 
@@ -241,13 +274,13 @@ int main(int argc, char* argv[]){
 		g_ptr_array_sort(regioes,(GCompareFunc) strcompare);
 
 		fprintf(iCit, "<head>\n\t<meta charset='UTF-8'>\n</head>\n<body>\n<h1>Citações</h1>\n");
-		fprintf(iCit, "%d citações de %d autores.\n", citCount, autores->len);
+		fprintf(iCit, "<h3>%d citações de %d autores.</h3>\n", citCount, autores->len);
 		printIndex(iCit, autores, printRefsCits);
 		fprintf(iCit, "</body>\n");
 		fclose(iCit);
 
 		fprintf(iProv, "<head>\n\t<meta charset='UTF-8'>\n</head>\n<body>\n<h1>Provérbios</h1>\n");
-		fprintf(iProv, "%d provérbios de %d línguas/regiões.\n", provCount, regioes->len);
+		fprintf(iProv, "<h3>%d provérbios de %d línguas/regiões.</h3>\n", provCount, regioes->len);
 		printIndex(iProv, regioes, printRefsProv);
 		fprintf(iProv, "</body>\n");
 		fclose(iProv);
