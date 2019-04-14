@@ -2,10 +2,10 @@
 
 BEGIN  {
         OFS = ";"
-        ORS = ""
+        #ORS = ""
         FS=";"}
 
-NF == 1 {print $0;}
+NF == 1 && length($0)!=1 {print $0} 
 
 NF > 1 {
         n=0;
@@ -13,7 +13,7 @@ NF > 1 {
                 if($i=="")
                         n++;
         }
-        if(n==NF-1){} #não consigo tirar os \n
+        if(n==NF-1){} 
         else{
                 if($1=="") $1="NIL"
                 print $0} 
