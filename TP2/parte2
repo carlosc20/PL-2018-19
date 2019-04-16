@@ -1,0 +1,30 @@
+#!/usr/bin/gawk -f
+
+
+BEGIN  {
+        RS="NIL"; # não gosto muito, mas não consigo por a ser ";\n"
+        FS=";"
+        nCod = 0;}
+
+
+#vê isto...no excel fica em células diferentes, mas na verdade é tudo do $4
+#$2=="750.10" {for (i = 1; i<=NF; i++)
+#                            print i,$i}
+
+
+NR > 1 {
+        if($2~/([0-9]+\.?)+/){
+            print "Código: ",$2;
+            print "Titulo: ",$3;
+            print "Descrição: ",$4;
+            print "Notas: ",$27,"\n"; #isto dá merda, mas não consigo resolver
+            nCod++;}
+        if ($10=="") 
+            $10="Sem tipo";
+        tipos[$10]++;
+        }
+
+END {print "Número de registos:" nCod;
+     for(tip in tipos)
+            print tip, "->", tipos[tip], "ocorrências"; 
+        }

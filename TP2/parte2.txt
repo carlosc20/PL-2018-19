@@ -1,0 +1,219 @@
+Código:  750
+Titulo:  PRESTAÇÃO DE SERVIÇOS DE ENSINO E FORMAÇÃO
+Descrição:  "Relativo à prestação de serviços no domínio da educação/ensino/qualificação da população, independentemente da idade ou do contexto (escolar, académico, profissional ou outro) - inclui a educação pré-escolar, o ensino básico e secundário, o ensino superior, a educação extraescolar e todos os cursos de formação, de
+qualificação profissional e valorização permanente, em qualquer área do conhecimento.
+"
+Notas:   
+
+Código:  750.10
+Titulo:  Gestão do aluno/formando
+Descrição:  Compreende as atividades relacionadas com apresentação de candidaturas, seleção de candidatos, matrículas, inscrições, transferências de alunos/formandos entre cursos, turmas ou estabelecimentos de ensino, e ainda as atividades relacionadas com a orientação vocacional do aluno/formando, e/ou o seu encaminhamento para percurso ou ensino especial.
+Notas:   
+
+Código:  750.10.001
+Titulo:  Seleção e seriação para ingresso no ensino ou formação
+Descrição:  "Avaliação da capacidade para a frequência de curso ou de ação de formação, bem como a realização das tarefas inerentes ao concurso ou admissão, designadamente as provas específicas, e à satisfação de pré-requisitos (realização de provas de aptidão física, funcional ou vocacional).
+Inicia com a candidatura a curso ou inscrição/encaminhamento para formação e termina com a publicação da lista de graduação final ou lista de admitidos a formação.
+Inclui realização de provas de ingresso, aplicação de fórmulas e classificações mínimas, seriação dos candidatos, elaboração de pautas finais e respetiva homologação."
+Notas:   
+
+Código:  750.10.001.01
+Titulo:  Seleção e seriação para ingresso no ensino ou formação: seleção 
+Descrição:  "Inicia com a candidatura / encaminhamento.
+Inclui apresentação de elementos instrutórios, verificação dos pré-requisitos, aplicação dos métodos para a seleção, quando necessário, como a realização de provas de ingresso (gerais ou específicas) e respetiva avaliação, elaboração e publicitação de lista provisória de admitidos e excluídos, reclamações.
+Termina com publicitação de lista de admitidos e excluídos."
+Notas:  
+E sintetizada no
+PN  150.40.500 - Recolha e tratamento de dados estatísticos de apoio à gestão." 
+
+Código:  750.10.001.02
+Titulo:  Seleção e seriação para ingresso no ensino ou formação: seriação 
+Descrição:  "Inicia-se com a aplicação dos métodos para a ordenação dos candidatos.
+Inclui a elaboração de listas ou pautas definitivas.
+Termina com a publicitação.
+"
+Notas:   
+
+Código:  750.10.002
+Titulo:  Processamento de matrículas ou inscrições no ensino ou em formação
+Descrição:  "Realização ou renovação de matrícula em cursos ou inscrição em ações de formação.
+Inicia com o pedido de acesso ou ingresso e termina com a entrega de comprovativo de matrícula ou inscrição.
+Inclui verificação de dados de identificação e validação da existência dos requisitos necessários para efeito de matrícula ou inscrição.
+"
+Notas:  
+PN 750.20.600 - Realização de atividades de ensino ou formação." 
+
+Código:  750.10.300
+Titulo:  Processamento dos dados cadastrais de alunos ou formandos
+Descrição:  "Atualização continuada da informação cadastral do aluno ou formando.
+Inicia com o registo dos dados biográficos, curriculares, do aproveitamento escolar e ou profissionais do aluno ou formando e termina com a indicação de conclusão de estudos ou da ação de formação ou  com a prescrição da matrícula ou abate ao efetivo batalhão esolcar ouo colegial. 
+Inclui validação de dados do aluno ou formando, registo de dados relativos à assiduidade e à aplicação do regime disciplinar, registo e atualização de dados relativos ao aproveitamento escolar e percurso académico ou de ensino."
+Notas:   
+
+Código:  750.10.600
+Titulo:  Controlo de assiduidade de alunos ou formandos
+Descrição:  "Verificação do cumprimento do dever do aluno ou formando de frequentar as atividades letivas, escolares ou formativas.
+Inicia com o registo de faltas do aluno ou formando e termina com a síntese de ocorrências relativas à assiduidade e pontualidade do mesmo.
+Inclui justificação de faltas e notificação dos interessados."
+Notas:   
+
+Código:  750.10.600.01
+Titulo:  Controlo de assiduidade de alunos ou formandos: cursos financiados
+Descrição:  "Verificação do cumprimento do dever do aluno ou formando de frequentar as atividades letivas, escolares ou formativas em cursos ou ações de formação financiados.
+Inicia com o registo de faltas do aluno ou formando e termina com a síntese de ocorrências relativas à assiduidade e pontualidade do mesmo no encerramento do curso, ação ou ano letivo.
+Inclui justificação de faltas e notificação dos interessados."
+Notas:   
+
+Código:  750.10.600.02
+Titulo:  Controlo de assiduidade de alunos ou formandos: cursos não financiados
+Descrição:  "Verificação do cumprimento do dever do aluno ou formando de frequentar as atividades letivas, escolares ou formativas em cursos ou ações de formação financiados.
+Inicia com o registo de faltas do aluno ou formando e termina com a síntese de ocorrências relativas à assiduidade e pontualidade do mesmo no encerramento do curso, ação ou ano letivo.
+Inclui justificação de faltas e notificação dos interessados."
+Notas:   
+
+Código:  750.10.601
+Titulo:  Processamento de pedidos de admissão a provas de avaliação
+Descrição:  "Realização das atividades inerentes à inscrição para prestação de provas de avaliação de conhecimentos.
+Inicia com a inscrição e termina com a publicitação das pautas finais.
+Inclui, conforme o grau de ensino, ciclo de estudos ou formação em apreço, proposição de realização de prova ou de defesa, entrega de termo de aceitação ou parecer do orientador, de declaração do departamento e de autorização de depósito no repositório bem como dos comprovativos da inscrição e frequência e aatribuição do número interno de identificação, nos casos previstos legalmente."
+Notas:  "#Critério de densidade informacional:
+Informação de síntese recuperável no
+PN 750.30.601 - Processamento e comunicação dos resultadosde avaliação." 
+
+Código:  750.10.602
+Titulo:  Integração e acompanhamento de alunos com necessidades educativas especiais
+Descrição:  "Acolhimento e disponibilização de recursos educativos adequados a cada caso, durante o percurso escolar ou formativo, de forma a facilitar o desenvolvimento académico, pessoal e sócio-emocional do estudante ou formando, com vista à sua integração e participação em todas as esferas da sociedade.
+Inicia com a manifestação expressa da necessidade ou sinalização de acompanhamento especial e termina com a satisfação da necessidade ou com a conclusão do grau de ensino ou da formação.
+Inclui procedimentos de referenciação e avaliação, a proposta de adoção de medidas e soluções apropriadas à necessidade expressa, através de programa/plano educativo individual e seu acompanhamento."
+Notas:   
+
+Código:  750.20
+Titulo:  Gestão formativa e curricular
+Descrição:  Compreende as atividades preparatórias da criação, realização, avaliação, reestruturação e extinção de cursos, ciclos de ensino, ações de formação, estágios ou qualquer outro tipo de oferta formativa, no que se inclui a oferta de atividades extracurriculares.
+Notas:   
+
+Código:  750.20.001
+Titulo:  Conceção, revisão e extinção de currículos e planos de estudos
+Descrição:  "Desenvolvimento e estudo dos currículos, programas das disciplinas, programas e orientações relativas às áreas ou estruturas curriculares e áreas curriculares não disciplinares, bem como a sua alteração ou extinção, em coerência com os objetivos do sistema educativo.
+Inicia com a apresentação de propostas e termina com a decisão.
+Inclui análise de conteúdos informativos, elaboração e recolha de pareceres e deliberação por parte dos órgãos de gestão."
+Notas:   
+
+Código:  750.20.002
+Titulo:  Conceção, revisão e extinção de planos de ações de formação
+Descrição:  "Desenvolvimento de programas e referenciais das ações de formação, bem como a sua alteração ou extinção, em coerência com os objetivos de formação.
+Inicia com a propostas e termina com a decisão.
+Inclui análise de conteúdos informativos, elaboração e recolha de pareceres e deliberação por parte dos órgãos competentes."
+Notas:   
+
+Código:  750.20.002.01
+Titulo:  Conceção, revisão e extinção de planos de ações de formação: preparação 
+Descrição:  "Desenvolvimento de programas  ações de formação, bem como a sua alteração ou extinção, em coerência com os objetivos de formação.
+Inicia com a propostas e termina com a decisão.
+Inclui análise de conteúdos informativos, elaboração e recolha de pareceres e deliberação por parte dos órgãos competentes."
+Notas:  "REGULAMENTO CE N.O 1083/2006
+Artigo 60.o - f) Estabelece procedimentos destinados a assegurar que todos os documentos relativos a despesas e auditorias necessários para garantir uma pista de auditoria adequada são conservados  em conformidade com o disposto no artigo 90.o 
+
+Código:  750.20.002.02
+Titulo:  Conceção, revisão e extinção de planos de ações de formação: aprovação 
+Descrição:  Deliberação e aprovação dos referenciais  de ações de formação. Inicia com a propostas e termina com a decisão. Inclui a recolha de pareceres dos órgãos competentes.
+Notas:   
+
+Código:  750.20.300
+Titulo:  Produção e seleção de recursos didático-pedagógicos
+Descrição:  "Apreciação dos recursos didático-pedagógicos no que diz respeito à sua adequação às atividades educativas e formativas a que se destinam.
+Inicia com a identificação de necessidades de material didático e termina com a divulgação ou disponibilização dos recursos.
+Inclui elaboração ou seleção de fontes de informação e aplicação de critérios para apreciação de material didático."
+Notas:   
+
+Código:  750.20.301
+Titulo:  Distribuição de atividades de ensino ou formação
+Descrição:  "Organização do ano letivo em qualquer nível de ensino, bem como à organização da formação.
+Inicia com a listagem dos alunos ou formandos inscritos e termina com a divulgação dos horários e das turmas, turnos ou grupos.
+Inclui constituição das turmas, turnos ou grupos."
+Notas:   
+
+Código:  750.20.600
+Titulo:  Realização de atividades de ensino ou formação
+Descrição:  "Concretização de atividades formativas, letivas e extra curriculares.
+Inicia com a análise do programa de curso ou formação e termina com a apresentação do relatório sobre a concretização das atividades curriculares letivas e formativas no encerramento da ação ou do ano letivo.
+Inclui elaboração de plano de aula ou plano de formação, implementação de estratégias técnico-pedagógicas, definição de planos de recuperação, de acompanhamento ou desenvolvimento, produção de sumários, elaboração de relatórios periódicos das aulas, apresentação de propostas de atividades, monitorização do desenvolvimento das aprendizagens e interação entre docentes ou formadores e alunos ou formandos."
+Notas:  
+PN 750.30.601 - Processamento e comunicação de resultados de avaliação 
+
+Código:  750.20.601
+Titulo:  Realização de atividades de formação e treino animal
+Descrição:  "Concretização de atividades práticas de ensino e treino animal.
+Inicia com a definição do programa de formação adaptado a cada caso, e termina com a concretização das atividades.
+Inclui elaboração de plano de aula, a avaliação do desenvolvimento animal, relativos a graus de dificuldade ou capacidades desenvolvidas.
+"
+Notas:  
+Ou, em caso específico no
+PN 750.30.601 - Processamento e comunicação de resultados de avaliação." 
+
+Código:  750.30
+Titulo:  Avaliação de aprendizagens
+Descrição:  "Compreende as atividades de preparação, execução e processamento de resultados dos processos de avaliação de aprendizagens que decorrem no quadro do ensino regular e da formação profissional inicial ou contínua.
+Compreende, igualmente, as atividades de reconhecimento, creditação e validação de competências e qualificações académicas, bem como de creditação da experiência profissional e das aprendizagens não formais e informais (obtidas fora do sistema formal de ensino), para prosseguimento de estudos e/ou atribuição de diplomas.
+Inclui o reconhecimento de graus e diplomas obtidos no estrangeiro, a pedido dos titulares."
+Notas:   
+
+Código:  750.30.001
+Titulo:  Conceção e revisão dos métodos de avaliação de aprendizagens
+Descrição:  "Elaboração de referenciais e modalidades de avaliação quer das aprendizagens e qualificações, quer do sistema educativo.
+Inicia com a apresentação de propostas e termina com a aprovação.
+Inclui verificação e análise de propostas, elaboração e recolha de pareceres e deliberação por parte dos órgãos de gestão."
+Notas:   
+
+Código:  750.30.300
+Titulo:  Elaboração de instrumentos de avaliação de aprendizagens
+Descrição:  "Conceção de instrumentos adequados à avaliação das diversas aprendizagens e às circunstâncias em que ocorrem.
+Inicia com a elaboração da matriz e projeto de instrumento de avaliação e termina com a apresentação de instrumento de avaliação.
+Inclui seleção de materiais-suporte dos itens de avaliação, elaboração de instruções ou informações a incluir na prova, definição de critérios de classificação, construção de grelhas de classificação, adaptação de provas para alunos ou formandos portadores de deficiência e aprovação superior do instrumento de avaliação, quando devido."
+Notas:   
+
+Código:  750.30.600
+Titulo:  Aplicação de instrumentos de avaliação de aprendizagens
+Descrição:  "Execução organizada de modalidades de avaliação. Inicia com a aplicação de instrumentos de avaliação e termina com a classificação do aluno ou formando pelo professor corretor.
+Inclui elaboração da lista dos alunos que realizam a prova (pautas de chamada), distribuição de enunciados, cotação das respostas dos alunos ou formandos, elaboração de grelhas de classificação e pautas provisórias."
+Notas:   
+
+Código:  750.30.601
+Titulo:  Processamento e comunicação de resultados de avaliação
+Descrição:  "Lançamento e publicitação dos resultados da avaliação das aprendizagens.
+Inicia com a análise de grelhas de classificação e pautas provisórias e termina com o lançamento de resultados definitivos e a sua publicitação.
+Inclui reapreciação da avaliação da prova sempre que solicitado e o registo dos resultados definitivos."
+Notas:  "#Critério de densidade informacional:
+Informação não recuperável noutro PN 
+
+Código:  750.30.602
+Titulo:  Reconhecimento, creditação e validação de competências e qualificações
+Descrição:  "Ações de validação e valorização de conhecimentos, aptidões, competências e qualificações adquiridas pela experiência de ensino, laboral e de vida, através da atribuição de equivalência ou reconhecimento de um grau de habilitação académica ou profissional.
+Inicia com a verificação e análise do percurso formativo e termina com a definição da qualificação.
+Inclui elaboração do portfólio individual que explicita e organiza as evidências das competências adquiridas."
+Notas:   
+
+Código:  750.30.602.01
+Titulo:  Reconhecimento, creditação e validação de competências e qualificações: verificação das condições
+Descrição:  "Inicia com a verificação e análise do percurso formativo e termina com relatório preliminar.
+Inclui elaboração do portofólio individual que explicita e organiza as evidências das competências adquiridas."
+Notas:  "#Critério de densidade informacional:
+Enumeração e tipificação dos casos recuperável através das estatísticas.
+Esta síntese não permite recuperar o particular e individual, mas apenas o geral.
+A aplicação de um critério de amostragem aleatória sobre este PN permitirá conhecer em detalhe alguns casos e obter um subconjunto representativo de todas as características da população-alvo.
+Toma ainda como base o facto da imprevisibilidade dos estudos nesta área e a impossibilidade atual de conservar toda a produção.
+A constituição de uma amostra significativa do universo de onde é retirada, mediante a aplicação de métodos estatísticos com uma margem de erro controlada, será suficiente para representar o universo.
+A grelha para seleção da amostragem encontra-se no final desta página.
+Extra amostra poderão ser conservadas os fat files ou os processos referentes a casos com maior impacto social." 
+
+Código:  750.30.602.02
+Titulo:  Reconhecimento, creditação e validação de competências e qualificações: atribuição de equivalência ou reconhecimento
+Descrição:  "Inicia com análise do relatório preliminar da análise do percurso formativo e termina com a definição da qualificação.
+Inclui reuniões e elaboração de pareceres."
+Notas:  "#Critério de densidade informacional:
+Informação não recuperável noutro PN." 
+
+Número de registos:29
+PC -> 12 ocorrências
+PE -> 5 ocorrências
+Sem tipo -> 12 ocorrências
