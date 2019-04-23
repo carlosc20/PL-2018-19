@@ -2,50 +2,62 @@
 
 
 BEGIN  {
-        RS="NIL"; # não gosto muito, mas não consigo por a ser ";\n"
-        FS=";"
-        nCod = 0;
-        print "digraph {" > "grafo.dot";
-        print "ratio = \"compress\"";
-        print "ranksep=5.75; size = \"8.3,11.7!\";"; # random cenas nem sei
-        print "rankdir = LR;";
-        }
-
-
-#vê isto...no excel fica em células diferentes, mas na verdade é tudo do $4
-#$2=="750.10" {for (i = 1; i<=NF; i++)
-#                            print i,$i}
+    RS="NIL";
+    FS=";"
+    nCod = 0;
+    beginGrafo("grafo.dot");
+}
 
 NR > 1 {
-        if($2~/([0-9]+\.?)+/){
-            print "Código: ",$2;
-            print "Titulo: ",$3;
-            print "Descrição: ",$4;
-            print "Notas: ",$27,"\n"; #isto dá merda ou não, mas não consigo resolver
-            nCod++;
+    if($2~/([0-9]+\.?)+/){
+        nCod++;
+        print "Código: ",$2;
+        print "Titulo: ",$3;
+        print "Descrição: ",$4;
+        if($27 != "")
+            print "Notas: ",$27;
+            
+        print "\n";
 
-            if($8!=""){
+        # 11 -> dono do processo, 12 -> participante do processo
+
+        #Tipo
+        if($10=="") 
+            $10="Sem tipo";
+        tipos[$10]++;
+
+        #Diplomas juridico-administrativos 
+        if($8!=""){
             split($8,leis,"#")
             printf ("\t\"%s\" -> {",$2) > "grafo.dot";
             for(l in leis){
-                sub("\r\n","",leis[l]); 
+                sub("\r\n","",leis[l]);
                 sub("\"","",leis[l]);
                 if(length(leis[l]) > 1) {
-                    #printf ("\t\"%s\" -- {", "\""$2"\"", "--", "\""leis[l]"\"" ";" > "grafo.dot";
                     printf (" \"%s\"",leis[l]) > "grafo.dot";
-                    }
                 }
-            printf ("};\n") > "grafo.dot";
             }
-
-        if ($10=="") 
-            $10="Sem tipo";
-        tipos[$10]++;
+            printf ("};\n") > "grafo.dot";
         }
     }
+}
 
-END {print "Número de registos:" nCod;
-     for(tip in tipos)
-            print tip, "->", tipos[tip], "ocorrências"; 
-    print "}" > "grafo.dot";
-        }
+END {
+    print "Número de registos:" nCod;
+    for(tip in tipos)
+        print tip, "->", tipos[tip], "ocorrências"; 
+    endGrafo("grafo.dot");
+}
+
+function beginGrafo(n) {
+    print "digraph {" > n;
+    print "ratio = \"compress\"" > n;
+    print "ranksep=5.75; size = \"8.3,11.7!\";" > n; # random cenas nem sei
+    print "rankdir = LR;" > n;
+}
+
+
+
+function endGrafo(n) {
+    print "}" > n;
+}
