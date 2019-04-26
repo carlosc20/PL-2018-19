@@ -2,8 +2,6 @@
 
 BEGIN  {
     OFS = ";"
-    #ORS = "\n"
-    #RS="\r\n"
     FS=";"
     }
 
