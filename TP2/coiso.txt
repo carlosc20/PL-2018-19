@@ -17,29 +17,18 @@ Inicia com a candidatura a curso ou inscrição/encaminhamento para formação e
 Inclui realização de provas de ingresso, aplicação de fórmulas e classificações mínimas, seriação dos candidatos, elaboração de pautas finais e respetiva homologação."
 
 
-Donos:
-DGES
-AP
-
-
-Partic:
-IES
-FA
-AP
-
-
 Código:  750.10.001.01
-Titulo:  Seleção e seriação para ingresso no ensino ou formação: seleção
+Titulo:  Seleção e seriação para ingresso no ensino ou formação: seleção 
 Descrição:  "Inicia com a candidatura / encaminhamento.
 Inclui apresentação de elementos instrutórios, verificação dos pré-requisitos, aplicação dos métodos para a seleção, quando necessário, como a realização de provas de ingresso (gerais ou específicas) e respetiva avaliação, elaboração e publicitação de lista provisória de admitidos e excluídos, reclamações.
 Termina com publicitação de lista de admitidos e excluídos."
-Notas:
+Notas:  
 E sintetizada no
 PN  150.40.500 - Recolha e tratamento de dados estatísticos de apoio à gestão."
 
 
 Código:  750.10.001.02
-Titulo:  Seleção e seriação para ingresso no ensino ou formação: seriação
+Titulo:  Seleção e seriação para ingresso no ensino ou formação: seriação 
 Descrição:  "Inicia-se com a aplicação dos métodos para a ordenação dos candidatos.
 Inclui a elaboração de listas ou pautas definitivas.
 Termina com a publicitação.
@@ -52,31 +41,15 @@ Descrição:  "Realização ou renovação de matrícula em cursos ou inscriçã
 Inicia com o pedido de acesso ou ingresso e termina com a entrega de comprovativo de matrícula ou inscrição.
 Inclui verificação de dados de identificação e validação da existência dos requisitos necessários para efeito de matrícula ou inscrição.
 "
-Notas:
+Notas:  
 PN 750.20.600 - Realização de atividades de ensino ou formação."
-
-
-Donos:
-ES
-AP
-Grupo IP
-
-
-Partic:
-DGES
-AP
 
 
 Código:  750.10.300
 Titulo:  Processamento dos dados cadastrais de alunos ou formandos
 Descrição:  "Atualização continuada da informação cadastral do aluno ou formando.
-Inicia com o registo dos dados biográficos, curriculares, do aproveitamento escolar e ou profissionais do aluno ou formando e termina com a indicação de conclusão de estudos ou da ação de formação ou  com a prescrição da matrícula ou abate ao efetivo batalhão esolcar ouo colegial.
+Inicia com o registo dos dados biográficos, curriculares, do aproveitamento escolar e ou profissionais do aluno ou formando e termina com a indicação de conclusão de estudos ou da ação de formação ou  com a prescrição da matrícula ou abate ao efetivo batalhão esolcar ouo colegial. 
 Inclui validação de dados do aluno ou formando, registo de dados relativos à assiduidade e à aplicação do regime disciplinar, registo e atualização de dados relativos ao aproveitamento escolar e percurso académico ou de ensino."
-
-
-Donos:
-ES
-AP
 
 
 Código:  750.10.600
@@ -84,11 +57,6 @@ Titulo:  Controlo de assiduidade de alunos ou formandos
 Descrição:  "Verificação do cumprimento do dever do aluno ou formando de frequentar as atividades letivas, escolares ou formativas.
 Inicia com o registo de faltas do aluno ou formando e termina com a síntese de ocorrências relativas à assiduidade e pontualidade do mesmo.
 Inclui justificação de faltas e notificação dos interessados."
-
-
-Donos:
-AP
-Grupo IP
 
 
 Código:  750.10.600.01
@@ -115,22 +83,11 @@ Informação de síntese recuperável no
 PN 750.30.601 - Processamento e comunicação dos resultadosde avaliação."
 
 
-Donos:
-ES
-INA
-IEFP
-
-
 Código:  750.10.602
 Titulo:  Integração e acompanhamento de alunos com necessidades educativas especiais
 Descrição:  "Acolhimento e disponibilização de recursos educativos adequados a cada caso, durante o percurso escolar ou formativo, de forma a facilitar o desenvolvimento académico, pessoal e sócio-emocional do estudante ou formando, com vista à sua integração e participação em todas as esferas da sociedade.
 Inicia com a manifestação expressa da necessidade ou sinalização de acompanhamento especial e termina com a satisfação da necessidade ou com a conclusão do grau de ensino ou da formação.
 Inclui procedimentos de referenciação e avaliação, a proposta de adoção de medidas e soluções apropriadas à necessidade expressa, através de programa/plano educativo individual e seu acompanhamento."
-
-
-Donos:
-ES
-IEFP
 
 
 Código:  750.20
@@ -145,10 +102,6 @@ Inicia com a apresentação de propostas e termina com a decisão.
 Inclui análise de conteúdos informativos, elaboração e recolha de pareceres e deliberação por parte dos órgãos de gestão."
 
 
-Donos:
-ES
-
-
 Código:  750.20.002
 Titulo:  Conceção, revisão e extinção de planos de ações de formação
 Descrição:  "Desenvolvimento de programas e referenciais das ações de formação, bem como a sua alteração ou extinção, em coerência com os objetivos de formação.
@@ -156,13 +109,8 @@ Inicia com a propostas e termina com a decisão.
 Inclui análise de conteúdos informativos, elaboração e recolha de pareceres e deliberação por parte dos órgãos competentes."
 
 
-Donos:
-AP
-Grupo IP
-
-
 Código:  750.20.002.01
-Titulo:  Conceção, revisão e extinção de planos de ações de formação: preparação
+Titulo:  Conceção, revisão e extinção de planos de ações de formação: preparação 
 Descrição:  "Desenvolvimento de programas  ações de formação, bem como a sua alteração ou extinção, em coerência com os objetivos de formação.
 Inicia com a propostas e termina com a decisão.
 Inclui análise de conteúdos informativos, elaboração e recolha de pareceres e deliberação por parte dos órgãos competentes."
@@ -171,7 +119,7 @@ Artigo 60.o - f) Estabelece procedimentos destinados a assegurar que todos os do
 
 
 Código:  750.20.002.02
-Titulo:  Conceção, revisão e extinção de planos de ações de formação: aprovação
+Titulo:  Conceção, revisão e extinção de planos de ações de formação: aprovação 
 Descrição:  Deliberação e aprovação dos referenciais  de ações de formação. Inicia com a propostas e termina com a decisão. Inclui a recolha de pareceres dos órgãos competentes.
 
 
@@ -182,16 +130,6 @@ Inicia com a identificação de necessidades de material didático e termina com
 Inclui elaboração ou seleção de fontes de informação e aplicação de critérios para apreciação de material didático."
 
 
-Donos:
-ES
-AP
-Grupo IP
-
-
-Partic:
-IMT
-
-
 Código:  750.20.301
 Titulo:  Distribuição de atividades de ensino ou formação
 Descrição:  "Organização do ano letivo em qualquer nível de ensino, bem como à organização da formação.
@@ -199,30 +137,13 @@ Inicia com a listagem dos alunos ou formandos inscritos e termina com a divulga�
 Inclui constituição das turmas, turnos ou grupos."
 
 
-Donos:
-ES
-AP
-Grupo IP
-
-
 Código:  750.20.600
 Titulo:  Realização de atividades de ensino ou formação
 Descrição:  "Concretização de atividades formativas, letivas e extra curriculares.
 Inicia com a análise do programa de curso ou formação e termina com a apresentação do relatório sobre a concretização das atividades curriculares letivas e formativas no encerramento da ação ou do ano letivo.
 Inclui elaboração de plano de aula ou plano de formação, implementação de estratégias técnico-pedagógicas, definição de planos de recuperação, de acompanhamento ou desenvolvimento, produção de sumários, elaboração de relatórios periódicos das aulas, apresentação de propostas de atividades, monitorização do desenvolvimento das aprendizagens e interação entre docentes ou formadores e alunos ou formandos."
-Notas:
+Notas:  
 PN 750.30.601 - Processamento e comunicação de resultados de avaliação
-
-
-Donos:
-ES
-AP
-Grupo IP
-
-
-Partic:
-IES
-IEFP
 
 
 Código:  750.20.601
@@ -231,18 +152,9 @@ Descrição:  "Concretização de atividades práticas de ensino e treino animal
 Inicia com a definição do programa de formação adaptado a cada caso, e termina com a concretização das atividades.
 Inclui elaboração de plano de aula, a avaliação do desenvolvimento animal, relativos a graus de dificuldade ou capacidades desenvolvidas.
 "
-Notas:
+Notas:  
 Ou, em caso específico no
 PN 750.30.601 - Processamento e comunicação de resultados de avaliação."
-
-
-Donos:
-FSS
-FA
-EC
-CMil
-EPAE
-AL
 
 
 Código:  750.30
@@ -259,11 +171,6 @@ Inicia com a apresentação de propostas e termina com a aprovação.
 Inclui verificação e análise de propostas, elaboração e recolha de pareceres e deliberação por parte dos órgãos de gestão."
 
 
-Donos:
-ES
-AP
-
-
 Código:  750.30.300
 Titulo:  Elaboração de instrumentos de avaliação de aprendizagens
 Descrição:  "Conceção de instrumentos adequados à avaliação das diversas aprendizagens e às circunstâncias em que ocorrem.
@@ -271,21 +178,10 @@ Inicia com a elaboração da matriz e projeto de instrumento de avaliação e te
 Inclui seleção de materiais-suporte dos itens de avaliação, elaboração de instruções ou informações a incluir na prova, definição de critérios de classificação, construção de grelhas de classificação, adaptação de provas para alunos ou formandos portadores de deficiência e aprovação superior do instrumento de avaliação, quando devido."
 
 
-Donos:
-ES
-AP
-
-
 Código:  750.30.600
 Titulo:  Aplicação de instrumentos de avaliação de aprendizagens
 Descrição:  "Execução organizada de modalidades de avaliação. Inicia com a aplicação de instrumentos de avaliação e termina com a classificação do aluno ou formando pelo professor corretor.
 Inclui elaboração da lista dos alunos que realizam a prova (pautas de chamada), distribuição de enunciados, cotação das respostas dos alunos ou formandos, elaboração de grelhas de classificação e pautas provisórias."
-
-
-Donos:
-ES
-AP
-Grupo IP
 
 
 Código:  750.30.601
@@ -297,22 +193,11 @@ Notas:  "#Critério de densidade informacional:
 Informação não recuperável noutro PN
 
 
-Donos:
-ES
-AP
-Grupo IP
-
-
 Código:  750.30.602
 Titulo:  Reconhecimento, creditação e validação de competências e qualificações
 Descrição:  "Ações de validação e valorização de conhecimentos, aptidões, competências e qualificações adquiridas pela experiência de ensino, laboral e de vida, através da atribuição de equivalência ou reconhecimento de um grau de habilitação académica ou profissional.
 Inicia com a verificação e análise do percurso formativo e termina com a definição da qualificação.
 Inclui elaboração do portfólio individual que explicita e organiza as evidências das competências adquiridas."
-
-
-Donos:
-ES
-IEFP
 
 
 Código:  750.30.602.01

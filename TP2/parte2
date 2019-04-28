@@ -19,8 +19,6 @@ NR > 1 {
             
         print "\n";
 
-        # 12 -> dono do processo, 13 -> participante do processo
-
         #Tipo
         if($10=="") 
             $10="Sem tipo";
@@ -40,29 +38,32 @@ NR > 1 {
             printf ("};\n") > "grafo.dot";
         }
 
+        #Dono do processo
         if($12!=""){
             split($12,donos,"#")
-            print "Donos: ";
+            printf ("\t{") > "grafo.dot";
             for(d in donos){
                 sub("\r\n","",donos[d]);
                 sub("\"","",donos[d]);
                 if(length(donos[d]) > 1) {
-                    print donos[d];
+                    printf (" \"%s\"",donos[d]) > "grafo.dot";
                 }
             }
-            print "\n";
+            printf ("}-> {\"%s\"};\n", $2) > "grafo.dot";
         }
+
+        #Participante do processo
         if($13!=""){
             split($13,par,"#")
-            print "Partic: ";
+            printf ("\t{") > "grafo.dot";
             for(p in par){
                 sub("\r\n","",par[p]);
                 sub("\"","",par[p]);
                 if(length(par[p]) > 1) {
-                    print par[p];
+                    printf (" \"%s\"",par[p]) > "grafo.dot";
                 }
             }
-            print "\n";
+            printf ("}-> {\"%s\"} [style=dashed];\n", $2) > "grafo.dot";
         }
     }
 
@@ -79,7 +80,7 @@ END {
 function beginGrafo(n) {
     print "digraph {" > n;
     print "ratio = \"compress\"" > n;
-    print "ranksep=5.75; size = \"8.3,11.7!\";" > n; # random cenas nem sei
+    print "ranksep=5.75; size = \"8.3,11.7!\";" > n;
     print "rankdir = LR;" > n;
 }
 
