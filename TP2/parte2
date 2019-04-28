@@ -19,7 +19,7 @@ NR > 1 {
             
         print "\n";
 
-        # 11 -> dono do processo, 12 -> participante do processo
+        # 12 -> dono do processo, 13 -> participante do processo
 
         #Tipo
         if($10=="") 
@@ -39,7 +39,34 @@ NR > 1 {
             }
             printf ("};\n") > "grafo.dot";
         }
+
+        if($12!=""){
+            split($12,donos,"#")
+            print "Donos: ";
+            for(d in donos){
+                sub("\r\n","",donos[d]);
+                sub("\"","",donos[d]);
+                if(length(donos[d]) > 1) {
+                    print donos[d];
+                }
+            }
+            print "\n";
+        }
+        if($13!=""){
+            split($13,par,"#")
+            print "Partic: ";
+            for(p in par){
+                sub("\r\n","",par[p]);
+                sub("\"","",par[p]);
+                if(length(par[p]) > 1) {
+                    print par[p];
+                }
+            }
+            print "\n";
+        }
     }
+
+
 }
 
 END {
