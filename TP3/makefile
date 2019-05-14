@@ -1,4 +1,4 @@
 make: 
-	flex mj.fl
-	yacc -v mj.y
-	cc -o mj y.tab.c 
+	flex yamlToJson.flex
+	yacc -v yamlToJson.y
+	cc -o exe y.tab.c 
