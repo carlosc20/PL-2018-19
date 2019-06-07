@@ -3,19 +3,16 @@
 
 %}
 %option noyywrap
+%option yylineno
 
 %%
-#[^\n]*             { return COMMENT; }
-[^:]*               { return KEY; }
-true                { return TRUE; }
-false               { return FALSE; }
-[0-9]+(\.[0-9]+)?	{ yylval.n=atof(yytext); return NUM; }
-[:-\n]              { return yytext[0]; }
+(:)                 {yylval.c=strdup(&yytext[0]); return OBJ;}
+(-)                 {return yytext[0];}
+[0-9]+(\.[0-9]+)?	{yylval.n=atof(yytext); return NUM; }
+#[^\n]+             {}
 
-
-
-[a-zA-Z]+			{ return STRING;}
-
-. 			{yyerror("Carater Inválido");}
+([A-Za-z]+\ *)+     {yylval.c=strdup(yytext); return STRING; }
+[ \t\n]               {}
+. 			        {yyerror("Carater Inválido");}
 
 %%
