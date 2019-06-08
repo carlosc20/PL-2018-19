@@ -20,49 +20,77 @@
 
 
 
-prog: "---" '\n' rootmap
-	;
-
-rootmap: mapping rootmap
-		|
-		;
-
-mapping: key ':' value
-		;
-
-key: STR
-	| NUM
-	;
-
-value: '{' mapflow '}' '\n'
-	| '[' seqflow ']' '\n'
-	| '\n' block
-	| STR
-	| NUM
-	| NULL
-	;
- 
-block: mapblock
-	| seqblock
-	;
-
-seqblock: '-' value '\n' seqblock
-		| 
-		;
+doc: "---" '\n' mapblock
+   ;
 
 mapblock: mapping '\n' mapblock
-		| '?' key '\n' value
-		|
+		| mapping
 		;
 
-mapflow: mapping ',' mapflow
-		|
+mapping: key ': ' value	'\n'		{ /* pode ter vários \n antes de value */ }
+	   | '? ' complexkey '\n' ": " value '\n'
+	   ;
+
+complexkey: key '\n' complexkey
+   		  | key '\n' complexkey
+		  | key
+  		  ;
+
+key: STR
+   | NUM
+   ;
+
+value: flowentry
+	 | "\n" mapblock
+	 | "\n" seqblock
+ 	 | "|\n" literalblock
+	 | ">\n" foldedblock
+	 ;
+
+scalar: STR
+	  | NUM
+	  | BOOL
+	  | "'" STR "'"
+	  | '"' STR '"'
+	  |			{ /* null */ }
+	  ;
+ 
+seqblock: '- ' entry '\n' seqblock
+		| '- ' entry
 		;
 
+entry: '{' mapflow '}'
+	 | '[' seqflow ']'
+ 	 | mapblock
+	 | scalar
+	 ;
 
-seqflow: value ',' seqflow
-		| 
-		; 
+literalblock: STR '\n'
+			| STR
+			;
+
+foldedblock: STR '\n'
+		   | STR
+		   ;
+
+flowentry: '{' mapflow '}'
+	 	 | '[' seqflow ']'
+		 | scalar
+		 ;
+
+mapflow: flowmapping ',' mapflow 
+	   | flowmapping
+	   |
+	   ;
+
+seqflow: flowentry ',' seqflow
+	   | flowentry
+	   |
+	   ; 
+
+flowmapping: key ': ' flowentry
+		   | key				{ /* valor é nulo */ }
+		   ;
 
 
 
