@@ -6,11 +6,12 @@
 %option yylineno
 
 %%
----                 { } /* inicio do doc */
+---\n+                 {yylval.c=strdup(yytext); return START; } /* inicio do doc */
+:\ *                   {return DOTS;}
 #[^\n]+\n           {}   /* comentario */
 
 
-[-?:,[\]{}>|"'\n]       {return yytext[0];}  /* indicadores */
+[-?,[\]{}>|"'\n]       {return yytext[0];}  /* indicadores */
 [+-]?[0-9]+(\.[0-9]+)?	{yylval.n=atof(yytext); return NUM;} 
 (true)|(false)          {yylval.c=strdup(yytext); return BOOL; }         /* boolean */
 ([A-Za-z0-9_]+\ *)+     {yylval.c=strdup(yytext); return STR; } /* palavras com espaços */
