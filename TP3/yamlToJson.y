@@ -7,7 +7,7 @@
 }
 %define parse.lac full
 %define parse.error verbose
-%token STR NUM NULL BOOL START SEQ MAP
+%token STR NUM NULL BOOL START SEQ MAP FOLD LIT
 %union{
 	double n;
 	char * c;
@@ -15,7 +15,7 @@
 %type <n>  NUM 
 %type <c>  START STR BOOL SEQ MAP
 %type <c>  doc mapblock mapping value seqblock entry collection
-%type <c>  scalar
+%type <c>  scalar //folded literal
 %type <c>  flowentry seqflow mapflow flowmapping
 %%
 
@@ -37,11 +37,13 @@ mapping: scalar MAP value						{asprintf(&$$, "%s: %s", $1,$3); /* pode ter vár
 	   ;
 
 
-value: scalar									{$$=$1;}
-	 | collection								{$$=$1;}
-	 | "\n" mapblock							{asprintf(&$$, "\n%s", $2);}
-	 | "\n" seqblock							{asprintf(&$$, "\n%s", $2);}
-	 ;
+value: scalar                                   {$$=$1;}
+     | collection                               {$$=$1;}
+     | '\n' mapblock                            {asprintf(&$$, "\n%s", $2);}
+     | '\n' seqblock                            {asprintf(&$$, "\n%s", $2);}
+//     | FOLD folded                        		{$$=$2;}
+//     | LIT literal                        		{$$=$2;}
+     ;
 
 	/* sequence block */
 seqblock: SEQ entry '\n' seqblock				{asprintf(&$$, "%s,\n%s", $2, $4);}
@@ -51,8 +53,6 @@ seqblock: SEQ entry '\n' seqblock				{asprintf(&$$, "%s,\n%s", $2, $4);}
 entry: scalar									{$$=$1;}
 	 | collection								{$$=$1;}
 	 ;
-
-	
 
 
 scalar: STR	 									{asprintf(&$$, "\"%s\"", $1);}		
@@ -80,8 +80,15 @@ mapflow: flowmapping ',' mapflow 				{asprintf(&$$, "%s,\n%s", $1, $3); /* pôr 
 flowmapping: scalar MAP flowentry				{asprintf(&$$, "%s: %s", $1, $3);}
 		   | scalar  							{asprintf(&$$, "%s: null", $1);}
 		   ;
+/*
+folded  : STR '\n'                                {asprintf(&$$, "%s", $1);}
+        | folded STR '\n'                        {asprintf(&$$, "%s%s", $1,$2);}
+        | folded '\n'                            {asprintf(&$$, "%s\\n", $1);}
 
-
+literal : STR '\n'                                {asprintf(&$$, "%s\\n", $1);}
+        | literal STR '\n'                        {asprintf(&$$, "%s\\n%s", $1,$2);}
+        | literal '\n'                            {asprintf(&$$, "%s\\n", $1);}
+*/
 %%
 #include "lex.yy.c"
 int main(){
