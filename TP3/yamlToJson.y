@@ -16,7 +16,7 @@
 %type <c>  START STR BOOL SEQ MAP
 %type <c>  AUMENTA DIMINUI IGUAL
 %type <c>  doc mapblock seqblock entry collection block key
-%type <c>  scalar //folded literal
+%type <c>  scalar folded literal
 %type <c>  flowentry seqflow mapflow flowmapping flow
 %%
 
@@ -32,14 +32,17 @@ block: mapblock									{asprintf(&$$, "{\n%s\n}", $1);}
 	 | seqblock									{asprintf(&$$, "[\n%s\n]", $1);}
 	 ;
 
-flow: '[' seqflow ']'						{asprintf(&$$, "[\n%s\n]", $2);}
-	| '{' mapflow '}'						{asprintf(&$$, "{\n%s\n}", $2);}
+flow: '[' seqflow ']'							{asprintf(&$$, "[\n%s\n]", $2);}
+	| '{' mapflow '}'							{asprintf(&$$, "{\n%s\n}", $2);}
 	;
 
 	/* mapping block */
-mapblock: key entry		       							{asprintf(&$$, "{%s%s}", $1, $2);}
-		| key '\n' AUMENTA block      					{asprintf(&$$, "{\n%s\n}", $4);}
-		| key '\n' AUMENTA block '\n' DIMINUI block		{asprintf(&$$, "{\n%s\n},\n%s", $4, $7);}
+mapblock: key entry		       							{asprintf(&$$, "%s%s", $1, $2);}
+        | key FOLD AUMENTA folded                       {asprintf(&$$, "\"%s\"", $4);}
+        | key LIT AUMENTA literal                       {asprintf(&$$, "\"%s\"", $4);}
+		| key '\n' IGUAL mapblock						{asprintf(&$$, "%snull,\n%s", $1, $4);}
+		| key '\n' AUMENTA block      					{asprintf(&$$, "\n%s}", $4);}
+		| key '\n' AUMENTA block '\n' DIMINUI mapblock	{asprintf(&$$, "\n%s,\n%s", $4, $7);}
 		| mapblock '\n' IGUAL mapblock					{asprintf(&$$, "%s,\n%s", $1, $4);}
 		;
 
@@ -48,8 +51,8 @@ key: scalar MAP 								{asprintf(&$$, "%s: ", $1);}
 
 	/* sequence block */
 seqblock: SEQ entry										{asprintf(&$$, "%s", $2);}
-		| SEQ '\n' AUMENTA block      					{asprintf(&$$, "[\n%s\n]", $4);}
-		| SEQ '\n' AUMENTA block '\n' DIMINUI block		{asprintf(&$$, "[\n%s\n],\n%s", $4, $7);}
+		| SEQ '\n' AUMENTA block      					{asprintf(&$$, "\n%s", $4);}
+		| SEQ '\n' AUMENTA block '\n' DIMINUI seqblock	{asprintf(&$$, "\n%s,\n%s", $4, $7);}
 		| seqblock '\n' IGUAL seqblock					{asprintf(&$$, "%s,\n%s", $1, $4);}
 		;
 
@@ -82,17 +85,16 @@ flowmapping: scalar MAP flowentry				{asprintf(&$$, "%s: %s", $1, $3);}
 		   | scalar  							{asprintf(&$$, "%s: null", $1);}
 		   ;
 
-/*
-folded  : STR '\n'                               {asprintf(&$$, "%s", $1);}
-        | folded STR '\n'                        {asprintf(&$$, "%s%s", $1,$2);}
-        | folded '\n'                            {asprintf(&$$, "%s\\n", $1);}
 
-literal : STR '\n'                                {asprintf(&$$, "%s\\n", $1);}
-        | literal STR '\n'                        {asprintf(&$$, "%s\\n%s", $1,$2);}
-        | literal '\n'                            {asprintf(&$$, "%s\\n", $1);}
+folded  : STR '\n' IGUAL                               {asprintf(&$$, "%s", $1);}
+        | folded STR '\n' IGUAL                        {asprintf(&$$, "%s%s", $1,$2);}
+        | folded '\n' IGUAL                            {asprintf(&$$, "%s\\n", $1);}
+
+literal : STR '\n' IGUAL                               {asprintf(&$$, "%s\\n", $1);}
+        | literal STR '\n' IGUAL                       {asprintf(&$$, "%s\\n%s", $1,$2);}
+        | literal '\n' IGUAL                           {asprintf(&$$, "%s\\n", $1);}
 
 
-*/
 %%
 #include "lex.yy.c"
 int main(){
