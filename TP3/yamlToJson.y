@@ -15,7 +15,7 @@
 %type <n>  NUM 
 %type <c>  START STR BOOL SEQ MAP
 %type <c>  AUMENTA DIMINUI IGUAL
-%type <c>  doc mapblock mapping value seqblock entry collection
+%type <c>  doc mapblock value seqblock entry collection block key
 %type <c>  scalar //folded literal
 %type <c>  flowentry seqflow mapflow flowmapping
 %%
@@ -23,32 +23,32 @@
 doc: START AUMENTA collection 					{printf("%s", $3);}									
    ;
 
-collection: mapblock							{asprintf(&$$, "{\n%s\n}", $1);}
-	 	  | seqblock							{asprintf(&$$, "[\n%s\n]", $1);}
+collection: block								{$$=$1;}
 	 	  | '{' mapflow '}'						{asprintf(&$$, "{\n%s\n}", $2);}
 		  | '[' seqflow ']'						{asprintf(&$$, "[\n%s\n]", $2);}
 	 	  ;
 
-	/* mapping block */
-mapblock: mapping '\n' mapblock					{asprintf(&$$, "%s,\n%s", $1, $3);}
-		| mapping '\n'       					{$$=$1;}
-		;
 
-mapping: scalar MAP value						{asprintf(&$$, "%s: %s", $1,$3); /* pode ter vários \n antes de value */ }
-	   ;
-
-
-value: scalar                                   {$$=$1;}
+block: mapblock									{asprintf(&$$, "{\n%s\n}", $1);}
+	 | seqblock									{asprintf(&$$, "[\n%s\n]", $1);}
 	 ;
 
-	/* sequence block */
-seqblock: SEQ entry											{asprintf(&$$, "%s", $2);}
-		| SEQ '\n' AUMENTA seqblock      					{asprintf(&$$, "[\n%s\n]", $4);}
-		| SEQ '\n' AUMENTA seqblock '\n' DIMINUI seqblock	{asprintf(&$$, "[\n%s\n],\n%s", $4, $7);}
-		| seqblock '\n' IGUAL seqblock						{asprintf(&$$, "%s,\n%s", $1, $4);}
+	/* mapping block */
+mapblock: key entry		       							{asprintf(&$$, "{%s%s}", $1, $2);}
+		| key '\n' AUMENTA block      					{asprintf(&$$, "{\n%s\n}", $4);}
+		| key '\n' AUMENTA block '\n' DIMINUI block		{asprintf(&$$, "{\n%s\n},\n%s", $4, $7);}
+		| mapblock '\n' IGUAL mapblock					{asprintf(&$$, "%s,\n%s", $1, $4);}
 		;
 
+key: scalar MAP 								{asprintf(&$$, "%s: ", $1);}
+   ;
 
+	/* sequence block */
+seqblock: SEQ entry										{asprintf(&$$, "%s", $2);}
+		| SEQ '\n' AUMENTA block      					{asprintf(&$$, "[\n%s\n]", $4);}
+		| SEQ '\n' AUMENTA block '\n' DIMINUI block		{asprintf(&$$, "[\n%s\n],\n%s", $4, $7);}
+		| seqblock '\n' IGUAL seqblock					{asprintf(&$$, "%s,\n%s", $1, $4);}
+		;
 
 entry: scalar									{$$=$1;}
 	 | '{' mapflow '}'							{asprintf(&$$, "{\n%s\n}", $2);}
@@ -61,6 +61,8 @@ scalar: STR	 									{asprintf(&$$, "\"%s\"", $1);}
 	  | "'" STR "'" 							{$$=$2;}
 	  | '"' STR '"'								{$$=$2;}
 	  ;
+
+
 
 
 flowentry: '{' mapflow '}'						{asprintf(&$$, "{\n%s\n}", $2);}
