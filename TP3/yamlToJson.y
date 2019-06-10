@@ -15,23 +15,26 @@
 %type <n>  NUM 
 %type <c>  START STR BOOL SEQ MAP
 %type <c>  AUMENTA DIMINUI IGUAL
-%type <c>  doc mapblock value seqblock entry collection block key
+%type <c>  doc mapblock seqblock entry collection block key
 %type <c>  scalar //folded literal
-%type <c>  flowentry seqflow mapflow flowmapping
+%type <c>  flowentry seqflow mapflow flowmapping flow
 %%
 
 doc: START AUMENTA collection 					{printf("%s", $3);}									
    ;
 
 collection: block								{$$=$1;}
-	 	  | '{' mapflow '}'						{asprintf(&$$, "{\n%s\n}", $2);}
-		  | '[' seqflow ']'						{asprintf(&$$, "[\n%s\n]", $2);}
+		  | flow								{$$=$1;}
 	 	  ;
 
 
 block: mapblock									{asprintf(&$$, "{\n%s\n}", $1);}
 	 | seqblock									{asprintf(&$$, "[\n%s\n]", $1);}
 	 ;
+
+flow: '[' seqflow ']'						{asprintf(&$$, "[\n%s\n]", $2);}
+	| '{' mapflow '}'						{asprintf(&$$, "{\n%s\n}", $2);}
+	;
 
 	/* mapping block */
 mapblock: key entry		       							{asprintf(&$$, "{%s%s}", $1, $2);}
@@ -51,8 +54,7 @@ seqblock: SEQ entry										{asprintf(&$$, "%s", $2);}
 		;
 
 entry: scalar									{$$=$1;}
-	 | '{' mapflow '}'							{asprintf(&$$, "{\n%s\n}", $2);}
-	 | '[' seqflow ']'							{asprintf(&$$, "[\n%s\n]", $2);} 
+	 | flow										{$$=$1;}
 	 ;
 
 scalar: STR	 									{asprintf(&$$, "\"%s\"", $1);}		
@@ -63,10 +65,7 @@ scalar: STR	 									{asprintf(&$$, "\"%s\"", $1);}
 	  ;
 
 
-
-
-flowentry: '{' mapflow '}'						{asprintf(&$$, "{\n%s\n}", $2);}
-	 	 | '[' seqflow ']'						{asprintf(&$$, "[\n%s\n]", $2);}
+flowentry: flow									{$$=$1;}
 		 | scalar								{$$=$1;}
 		 | scalar MAP flowentry					{asprintf(&$$, "{\n\"%s\": %s\n}", $1, $3);}
 		 ;
